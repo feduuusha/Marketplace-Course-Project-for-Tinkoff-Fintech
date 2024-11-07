@@ -12,7 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BrandLink {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_link_seq")
+    @SequenceGenerator(name = "brand_link_seq", sequenceName = "brand_link_seq", allocationSize = 1)
     private Long id;
     private String url;
     private String name;

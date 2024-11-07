@@ -6,6 +6,6 @@ import ru.itis.marketplace.userservice.entity.UserBrand;
 import java.util.List;
 
 public interface UserBrandRepository extends JpaRepository<UserBrand, Long> {
-    List<UserBrand> findByUser_Id(Long sellerId);
+    List<UserBrand> findByUserId(Long userId);
     void deleteByBrandId(Long brandId);
 }

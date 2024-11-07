@@ -12,7 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BrandPhoto {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_photo_seq")
+    @SequenceGenerator(name = "brand_photo_seq", sequenceName = "brand_photo_seq", allocationSize = 1)
     private Long id;
     private String url;
     private Long sequenceNumber;

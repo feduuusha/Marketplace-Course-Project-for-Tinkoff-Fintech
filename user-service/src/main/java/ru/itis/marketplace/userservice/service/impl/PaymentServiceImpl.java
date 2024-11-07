@@ -21,15 +21,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
-    @Value("${payment.successUrl}")
+    @Value("${payment.success-url}")
     private String successUrl;
-    @Value("${payment.cancelUrl}")
+    @Value("${payment.cancel-url}")
     private String cancelUrl;
-    @Value("${payment.apiKey}")
+    @Value("${payment.api-key}")
     private String apiKey;
     @Value("${payment.currencyCode}")
     private String currencyCode;
-    @Value("${payment.fileServiceBaseUrl}")
+    @Value("${payment.file-service-base-url}")
     private String fileServiceBaseUrl;
 
     @Override
@@ -45,10 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .setClientReferenceId(paymentId);
             for (var orderItem : orderItems) {
                 var product = products.get(orderItem.getProductId());
-
-                BigDecimal bd = BigDecimal.valueOf(product.price());
-                bd = bd.setScale(2, RoundingMode.HALF_UP);
-
+                BigDecimal bd = product.price().setScale(2, RoundingMode.HALF_UP);
                 var productData = SessionCreateParams.LineItem.PriceData.ProductData
                         .builder()
                         .setName(product.name())
@@ -57,14 +54,14 @@ public class PaymentServiceImpl implements PaymentService {
                     productData = productData
                             .addAllImage(product.photos()
                                     .stream()
-                                    .map(productPhoto -> "https://i.ebayimg.com/images/g/kAsAAOSw~V1hoQ6f/s-l640.jpg")
+                                    .map(productPhoto -> fileServiceBaseUrl + productPhoto.url())
                                     .toList());
                 }
 
                 params = params.addLineItem(
                         SessionCreateParams.LineItem
                                 .builder()
-                                .setQuantity(orderItem.getAmount())
+                                .setQuantity(orderItem.getQuantity())
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData
                                                 .builder()

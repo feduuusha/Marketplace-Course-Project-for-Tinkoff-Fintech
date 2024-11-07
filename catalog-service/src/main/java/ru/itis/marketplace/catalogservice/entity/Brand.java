@@ -2,7 +2,6 @@ package ru.itis.marketplace.catalogservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.itis.marketplace.catalogservice.entity.status.RequestStatus;
 
 import java.util.List;
 
@@ -10,17 +9,19 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Brand {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_seq")
+    @SequenceGenerator(name = "brand_seq", sequenceName = "brand_seq", allocationSize = 1)
     private Long id;
     private String name;
     private String description;
     private String linkToLogo;
-    private RequestStatus requestStatus = RequestStatus.UNDER_CONSIDERATION;
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = BrandPhoto.class)
+    private String requestStatus = "under_consideration";
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.REMOVE, targetEntity = BrandPhoto.class)
     private List<BrandPhoto> brandPhotos;
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = BrandLink.class)
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.REMOVE, targetEntity = BrandLink.class)
     private List<BrandLink> brandLinks;
 
     public Brand(String name, String description, String linkToLogo) {

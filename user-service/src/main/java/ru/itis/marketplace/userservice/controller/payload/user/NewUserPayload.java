@@ -20,7 +20,7 @@ public record NewUserPayload(
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$")
     @NotNull
     String username,
-    @Size(min = 8)
+    @Size(min = 8, max = 72)
     @NotBlank
     String password,
     @Positive

@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  catalog-db:
+    image: postgres:latest
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=feduuusha
+      - POSTGRES_PASSWORD=260206
+      - POSTGRES_DB=catalog
+    networks:
+      - marketplace_network
+    restart: always
+
+  user-db:
+    image: postgres:latest
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=feduuusha
+      - POSTGRES_PASSWORD=260206
+      - POSTGRES_DB=userinfo
+    networks:
+      - marketplace_network
+    restart: always
+
+  catalog-service:
+    image: feduuusha/catalog-service:0.0.1-SNAPSHOT
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    networks:
+      - marketplace_network
+    restart: always
+
+  user-service:
+    image: feduuusha/user-service:0.0.1-SNAPSHOT
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
+    networks:
+      - marketplace_network
+    restart: always
+
+  file-service:
+    image: feduuusha/file-service:0.0.1-SNAPSHOT
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env
+    networks:
+      - marketplace_network
+    restart: always
+
+networks:
+  marketplace_network:
+    driver: bridge

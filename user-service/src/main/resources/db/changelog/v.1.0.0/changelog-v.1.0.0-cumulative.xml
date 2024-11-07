@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="add-tag-1.0.0" author="Fyodor Voropaev">
+        <tagDatabase tag="v.1.0.0"/>
+    </changeSet>
+
+    <include file="2024-11-06-create-authority-seq.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-authority-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-role-seq.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-role-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-roles-authorities-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-user-seq.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-user-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-user-email-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-user-username-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-user-phone-number-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-users-authorities-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-06-create-users-roles-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-users-brands-seq.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-users-brands-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-users-brands-user-id-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-users-brands-brand-id-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-cart-item-seq.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-cart-item-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-cart-item-user-id-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-seq.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-user-id-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-payment-id-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-item-seq.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-item-table.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-item-brand-id-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-item-order-id-index.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

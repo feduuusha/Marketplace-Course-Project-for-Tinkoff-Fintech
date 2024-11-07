@@ -1,12 +1,13 @@
 package ru.itis.marketplace.userservice.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record Product(
         Long id,
         String name,
-        Double price,
+        BigDecimal price,
         String description,
         String requestStatus,
         Category category,

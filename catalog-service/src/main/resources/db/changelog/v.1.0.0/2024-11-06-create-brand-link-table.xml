@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2024-11-06-create-brand-link-table" author="Fyodor Voropaev">
+        <createTable tableName="brand_link">
+            <column name="id" type="bigint">
+                <constraints unique="true" nullable="false" primaryKey="true"/>
+            </column>
+            <column name="url" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="brand_id" type="bigint">
+                <constraints deleteCascade="true" nullable="false" foreignKeyName="fk_brand_photo_brand" referencedColumnNames="id" referencedTableName="brand"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

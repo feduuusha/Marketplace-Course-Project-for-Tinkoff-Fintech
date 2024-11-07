@@ -15,13 +15,14 @@ import lombok.Setter;
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_item_seq")
+    @SequenceGenerator(name = "order_item_seq", sequenceName = "order_item_seq", allocationSize = 1)
     private Long id;
 
     private Long productId;
     private Long sizeId;
     private Long brandId;
-    private Long amount;
+    private Long quantity;
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @JsonIgnore
