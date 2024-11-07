@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2024-11-06-create-brand-photo-brand-id-index" author="Fyodor Voropaev">
+        <createIndex tableName="brand_photo" indexName="idx_brand_photo_brand">
+            <column name="brand_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

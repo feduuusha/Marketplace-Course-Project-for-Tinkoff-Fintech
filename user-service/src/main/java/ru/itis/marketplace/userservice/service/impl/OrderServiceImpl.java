@@ -31,9 +31,9 @@ public class OrderServiceImpl implements OrderService {
     public List<CustomerOrder> findAllOrdersByUserIdAndOrderStatus(Long userId, String status) {
         userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with ID: " + userId + " not found"));
         if (status == null || status.isBlank()) {
-            return this.orderRepository.findByCustomer_Id(userId);
+            return this.orderRepository.findByUserId(userId);
         } else {
-            return this.orderRepository.findByCustomer_IdAndStatus(userId, status);
+            return this.orderRepository.findByUserIdAndStatus(userId, status);
         }
     }
 

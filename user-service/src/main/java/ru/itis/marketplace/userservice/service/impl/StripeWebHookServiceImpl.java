@@ -21,7 +21,7 @@ public class StripeWebHookServiceImpl implements StripeWebHookService {
     private final ObjectMapper objectMapper;
     private final OrderService orderService;
 
-    @Value("${payment.signingSecret}")
+    @Value("${payment.signing-secret}")
     private String signingSecret;
 
     @Override

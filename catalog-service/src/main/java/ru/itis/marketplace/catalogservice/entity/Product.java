@@ -7,9 +7,9 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
-import ru.itis.marketplace.catalogservice.entity.status.RequestStatus;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,28 +19,29 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq")
+    @SequenceGenerator(name = "product_seq", sequenceName = "product_seq", allocationSize = 1)
     private Long id;
     private String name;
-    private Double price;
+    private BigDecimal price;
     private String description;
-    private RequestStatus requestStatus = RequestStatus.UNDER_CONSIDERATION;
+    private String requestStatus = "under_consideration";
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<ProductPhoto> photos;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<ProductSize> sizes;
     @CreationTimestamp
-    private LocalDateTime additionDateTime;
+    private Instant additionDateTime;
     @UpdateTimestamp
-    private LocalDateTime updateDateTime;
+    private Instant updateDateTime;
 
-    public Product(String name, Double price, String description, Category category, Brand brand) {
+    public Product(String name, BigDecimal price, String description, Category category, Brand brand) {
         this.name = name;
         this.price = price;
         this.description = description;

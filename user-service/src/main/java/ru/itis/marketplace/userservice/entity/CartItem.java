@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Setter
@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CartItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_item_seq")
+    @SequenceGenerator(name = "cart_item_seq", sequenceName = "cart_item_seq", allocationSize = 1)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -25,7 +26,7 @@ public class CartItem {
     private Long sizeId;
     private Long quantity;
     @CreationTimestamp
-    private LocalDateTime creationDateTime;
+    private Instant creationDateTime;
 
     public CartItem(MarketPlaceUser user, Long productId, Long sizeId, Long quantity) {
         this.user = user;

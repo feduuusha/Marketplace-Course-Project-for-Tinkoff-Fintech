@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <changeSet id="2024-11-08-insert-base-admin-user" author="Fyodor Voropaev">
+        <insert tableName="user">
+            <column name="id">1</column>
+            <column name="email" value="${admin.email}"/>
+            <column name="username" value="${admin.username}"/>
+            <column name="password" value="${admin.password}"/>
+            <column name="phone_number" value="${admin.phone}"/>
+            <column name="first_name" value="${admin.first-name}"/>
+            <column name="last_name" value="${admin.last-name}"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

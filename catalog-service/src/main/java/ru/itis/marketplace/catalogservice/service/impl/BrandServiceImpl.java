@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.catalogservice.entity.Brand;
-import ru.itis.marketplace.catalogservice.entity.status.RequestStatus;
 import ru.itis.marketplace.catalogservice.repository.BrandRepository;
 import ru.itis.marketplace.catalogservice.service.BrandService;
 
@@ -28,16 +27,12 @@ public class BrandServiceImpl implements BrandService {
     public void updateBrandById(Long brandId, String name, String description, String linkToLogo, String status) {
         Optional<Brand> optionalBrand = this.brandRepository.findById(brandId);
         if (optionalBrand.isPresent()) {
-            if (RequestStatus.statusIsValid(status)) {
-                Brand brand = optionalBrand.get();
-                brand.setName(name);
-                brand.setDescription(description);
-                brand.setLinkToLogo(linkToLogo);
-                brand.setRequestStatus(RequestStatus.valueOf(status.toUpperCase()));
-                this.brandRepository.save(brand);
-            } else {
-                throw new IllegalArgumentException(status.toUpperCase() + " is not valid request status");
-            }
+            Brand brand = optionalBrand.get();
+            brand.setName(name);
+            brand.setDescription(description);
+            brand.setLinkToLogo(linkToLogo);
+            brand.setRequestStatus(status.toLowerCase());
+            this.brandRepository.save(brand);
         } else {
             throw new NoSuchElementException("Brand with the specified ID was not found");
         }
@@ -53,11 +48,8 @@ public class BrandServiceImpl implements BrandService {
     public List<Brand> findAllBrands(String status) {
         if (status == null) {
             return this.brandRepository.findAll();
-        }
-        if (RequestStatus.statusIsValid(status)) {
-            return this.brandRepository.findByRequestStatus(RequestStatus.valueOf(status.toUpperCase()));
         } else {
-            throw new IllegalArgumentException(status.toUpperCase() + " is not valid request status");
+            return this.brandRepository.findByRequestStatus(status.toLowerCase());
         }
     }
 

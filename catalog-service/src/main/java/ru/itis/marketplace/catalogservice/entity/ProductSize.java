@@ -12,7 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductSize {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_size_seq")
+    @SequenceGenerator(name = "product_size_seq", sequenceName = "product_size_seq", allocationSize = 1)
     private Long id;
     private String name;
     @ManyToOne

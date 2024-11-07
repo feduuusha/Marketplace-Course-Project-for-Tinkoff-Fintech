@@ -41,7 +41,7 @@ public class UserBrandServiceImpl implements UserBrandService {
     public List<Long> findAllUserBrands(Long userId) {
         Optional<MarketPlaceUser> optionalUser = this.userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            return this.userBrandRepository.findByUser_Id(userId)
+            return this.userBrandRepository.findByUserId(userId)
                     .stream()
                     .map(UserBrand::getBrandId)
                     .toList();
