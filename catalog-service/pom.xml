@@ -28,7 +28,9 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <module.image.name>${project.name}</module.image.name>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -48,7 +50,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>feduuusha/catalog-service:${project.version}</imageName>
+                    <imageName>feduuusha/${module.image.name}</imageName>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
