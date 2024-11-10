@@ -23,13 +23,11 @@ jobs:
       with:
         java-version: '21'
         distribution: 'zulu'
-    - name: Change directory to catalog-service
-      run: cd catalog-service
     - name: Login to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
     - name: Build a container image from our Spring Boot app using Paketo.io / Cloud Native Build Packs
-      run: ./mvnw spring-boot:build-image -Dmodule.image.name=$IMAGE_NAME 
-    - name: Tag & publish to GitHub Container Registry
+      run: cd catalog-service && mvn spring-boot:build-image -Dmodule.image.name=$IMAGE_NAME 
+    - name: Publish to GitHub Container Registry
       run: |
         IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
         docker push feduuusha/$IMAGE_NAME:latest
