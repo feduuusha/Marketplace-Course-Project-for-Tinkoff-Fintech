@@ -9,7 +9,8 @@ public interface BrandService {
     Brand findBrandById(Long id);
     void updateBrandById(Long brandId, String name, String description, String linkToLogo, String status);
     void deleteBrandById(Long id);
-    List<Brand> findAllBrands(String status);
+    List<Brand> findAllBrands(String status, Integer pageSize, Integer page, String sortedBy);
     Brand createBrand(String name, String description, String linkToLogo);
     List<Brand> findAllBrandByIds(List<Long> brandIds);
+    List<Brand> findBrandsByNameLike(String name);
 }
