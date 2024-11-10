@@ -50,7 +50,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>feduuusha/${module.image.name}</imageName>
+                    <imageName>${module.image.name}</imageName>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
