@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <module.image.name>${project.name}</module.image.name>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -69,7 +70,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>feduuusha/file-service:${project.version}</imageName>
+                    <imageName>${module.image.name}</imageName>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
