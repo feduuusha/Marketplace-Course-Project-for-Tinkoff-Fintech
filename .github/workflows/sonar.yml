@@ -1,17 +1,17 @@
 name: SonarCloud
 on:
+  workflow_dispatch:
   pull_request:
-    branches:
-      - '*'
-  push:
-    branches:
-      - 'main'
-      - 'develop'
+
 
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: 'zulu'
+          distribution: 'temurin'
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
