@@ -57,7 +57,7 @@ public class BrandRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createBrand(@Valid @RequestBody NewBrandPayload payload,
+    public ResponseEntity<Brand> createBrand(@Valid @RequestBody NewBrandPayload payload,
                                          UriComponentsBuilder uriComponentsBuilder) {
         Brand brand = brandService.createBrand(payload.name(), payload.description(), payload.linkToLogo());
         return ResponseEntity

@@ -12,12 +12,14 @@ import java.net.URI;
 @RestControllerAdvice
 public class GlobalExceptionHandlerControllerAdvice extends ResponseEntityExceptionHandler {
 
+    private static final String PROBLEM_DETAIL_TITLE = "/swagger-ui/index.html";
+
     @ExceptionHandler(BadRequestException.class)
     public ProblemDetail handleBadRequestException(HttpServletRequest request, BadRequestException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
         problemDetail.setTitle("Bad Request");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setType(URI.create("/swagger-ui/index.html"));
+        problemDetail.setType(URI.create(PROBLEM_DETAIL_TITLE));
         return problemDetail;
     }
 
@@ -27,7 +29,7 @@ public class GlobalExceptionHandlerControllerAdvice extends ResponseEntityExcept
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
         problemDetail.setTitle("Resource Not Found");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setType(URI.create("/swagger-ui/index.html"));
+        problemDetail.setType(URI.create(PROBLEM_DETAIL_TITLE));
         return problemDetail;
     }
 
@@ -36,7 +38,7 @@ public class GlobalExceptionHandlerControllerAdvice extends ResponseEntityExcept
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
         problemDetail.setTitle("Error on the server");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setType(URI.create("/swagger-ui/index.html"));
+        problemDetail.setType(URI.create(PROBLEM_DETAIL_TITLE));
         return problemDetail;
     }
 }
