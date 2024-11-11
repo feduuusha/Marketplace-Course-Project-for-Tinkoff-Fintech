@@ -1,11 +1,11 @@
-package ru.itis.marketplace.catalogservice.controller.payload.category;
+package ru.itis.marketplace.catalogservice.controller.payload.product;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record UpdateCategoryPayload(
+public record UpdateProductStatusPayload(
         @NotBlank
         @Size(max = 255)
-        String name
+        String requestStatus
 ) {
 }

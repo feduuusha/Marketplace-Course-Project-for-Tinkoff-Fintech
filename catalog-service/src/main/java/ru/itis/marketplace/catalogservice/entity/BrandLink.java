@@ -1,15 +1,19 @@
 package ru.itis.marketplace.catalogservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.proxy.HibernateProxy;
+
+import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BrandLink {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_link_seq")
@@ -17,14 +21,27 @@ public class BrandLink {
     private Long id;
     private String url;
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "brand_id")
-    @JsonIgnore
-    private Brand brand;
+    private Long brandId;
 
-    public BrandLink(String url, String name, Brand brand) {
+    public BrandLink(String url, String name, Long brandId) {
         this.url = url;
         this.name = name;
-        this.brand = brand;
+        this.brandId = brandId;
+    }
+
+    @Override
+    public final boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null) return false;
+        Class<?> oEffectiveClass = object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass() : object.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        BrandLink brandLink = (BrandLink) object;
+        return getId() != null && Objects.equals(getId(), brandLink.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }

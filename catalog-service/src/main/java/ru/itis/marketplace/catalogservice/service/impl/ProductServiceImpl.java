@@ -1,15 +1,14 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.itis.marketplace.catalogservice.entity.Brand;
-import ru.itis.marketplace.catalogservice.entity.Category;
 import ru.itis.marketplace.catalogservice.entity.Product;
+import ru.itis.marketplace.catalogservice.exception.BadRequestException;
+import ru.itis.marketplace.catalogservice.exception.NotFoundException;
 import ru.itis.marketplace.catalogservice.repository.BrandRepository;
 import ru.itis.marketplace.catalogservice.repository.CategoryRepository;
 import ru.itis.marketplace.catalogservice.repository.ProductRepository;
@@ -17,8 +16,6 @@ import ru.itis.marketplace.catalogservice.service.ProductService;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,114 +26,72 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
 
     @Override
-    public Optional<Product> findProductById(Long id) {
-        return this.productRepository.findById(id);
+    public Product findProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product with ID: " + id + " not found"));
     }
 
     @Override
     @Transactional
     public void updateProductById(Long productId, String name, BigDecimal price, String description,
                                                String status, Long categoryId, Long brandId) {
-        Optional<Product> optionalProduct = this.productRepository.findById(productId);
-        if (optionalProduct.isPresent()) {
-            Optional<Category> optionalCategory = this.categoryRepository.findById(categoryId);
-            Optional<Brand> optionalBrand = this.brandRepository.findById(brandId);
-            if (optionalCategory.isPresent() && optionalBrand.isPresent()) {
-                Product product = optionalProduct.get();
-                product.setName(name);
-                product.setDescription(description);
-                product.setPrice(price);
-                product.setRequestStatus(status.toLowerCase());
-                product.setCategory(optionalCategory.get());
-                product.setBrand(optionalBrand.get());
-                this.productRepository.save(product);
-            } else {
-                if (optionalCategory.isEmpty() && optionalBrand.isEmpty()) {
-                    throw new EntityNotFoundException("Brand with the specified ID was not found and Category with the specified ID was not found");
-                } else if (optionalBrand.isEmpty()) {
-                    throw new EntityNotFoundException("Brand with the specified ID was not found");
-                } else {
-                    throw new EntityNotFoundException("Category with the specified ID was not found");
-                }
-            }
-        } else {
-            throw new NoSuchElementException("Product with the specified ID was not found");
+        Product product = findProductById(productId);
+        categoryRepository.findById(categoryId).orElseThrow(() -> new BadRequestException("Category with ID: " + categoryId + " not found"));
+        brandRepository.findById(brandId).orElseThrow(() -> new BadRequestException("Brand with ID: " + brandId + " not found"));
+        if (!product.getName().equals(name) && productRepository.findByName(name).isPresent()) {
+            throw new BadRequestException("Product with name: " + name + " already exist");
         }
+        product.setName(name);
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setRequestStatus(status.toLowerCase());
+        product.setCategoryId(categoryId);
+        product.setBrandId(brandId);
+        productRepository.save(product);
     }
 
     @Override
-    @Transactional
     public void deleteProductById(Long id) {
-        this.productRepository.deleteById(id);
+        productRepository.deleteById(id);
     }
 
     @Override
-    public List<Product> findAllProducts(int size, int page, String sortBy, String direction, String status) {
-        if (size == 0 || page == -1) {
-            return this.productRepository.findByRequestStatus(status.toLowerCase(), Sort.by(Sort.Direction.fromString(direction), sortBy));
-        } else {
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy));
-            return this.productRepository.findByRequestStatus(status.toLowerCase(), pageable).toList();
+    public List<Product> findAllProducts(Integer pageSize, Integer page, String sortBy, String direction, BigDecimal priceFrom, BigDecimal priceTo, String status, Long brandId, Long categoryId) {
+        var dir = Sort.Direction.fromOptionalString(direction).orElse(Sort.Direction.ASC);
+        Sort sort = sortBy == null ? Sort.unsorted() : Sort.by(dir, sortBy);
+        Pageable pageable = Pageable.unpaged(sort);
+        if (pageSize != null && page != null) {
+            pageable = PageRequest.of(page, pageSize, sort);
         }
+        var specification = ProductRepository.buildProductSpecification(priceFrom, priceTo, status, brandId, categoryId);
+        return productRepository.findAll(specification, pageable).toList();
     }
 
     @Override
     @Transactional
     public Product createProduct(String name, BigDecimal price, String description, Long categoryId, Long brandId) {
-        Optional<Brand> optionalBrand = this.brandRepository.findById(brandId);
-        Optional<Category> optionalCategory = this.categoryRepository.findById(categoryId);
-        if (optionalBrand.isPresent() && optionalCategory.isPresent()) {
-            Brand brand = optionalBrand.get();
-            Category category = optionalCategory.get();
-            return this.productRepository.save(new Product(name, price, description, category, brand));
-        } else {
-            if (optionalCategory.isEmpty() && optionalBrand.isEmpty()) {
-                throw new EntityNotFoundException("Brand with the specified ID was not found and Category with the specified ID was not found");
-            } else if (optionalBrand.isEmpty()) {
-                throw new EntityNotFoundException("Brand with the specified ID was not found");
-            } else {
-                throw new EntityNotFoundException("Category with the specified ID was not found");
-            }
+        categoryRepository.findById(categoryId).orElseThrow(() -> new BadRequestException("Category with ID: " + categoryId + " not found"));
+        brandRepository.findById(brandId).orElseThrow(() -> new BadRequestException("Brand with ID: " + brandId + " not found"));
+        if (productRepository.findByName(name).isPresent()) {
+            throw new BadRequestException("Product with name: " + name + " already exist");
         }
-    }
-
-    @Override
-    public List<Product> findProductsByCategory(Long categoryId, int size, int page, String sortBy, String direction, String status) {
-        Optional<Category> optionalCategory = this.categoryRepository.findById(categoryId);
-        if (optionalCategory.isPresent()) {
-            if (size != 0 && page != -1) {
-                Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy));
-                return this.productRepository.findByCategoryIdAndRequestStatus(optionalCategory.get().getId(),
-                        status.toLowerCase(), pageable).toList();
-            } else {
-                return this.productRepository.findByCategoryIdAndRequestStatus(optionalCategory.get().getId(),
-                        status.toLowerCase());
-            }
-        } else {
-            throw new EntityNotFoundException("Category with the specified ID was not found");
-        }
-    }
-
-    @Override
-    public List<Product> findProductsByBrand(Long brandId, int size, int page, String sortBy, String direction, String status) {
-        Optional<Brand> optionalBrand = this.brandRepository.findById(brandId);
-        if (optionalBrand.isPresent()) {
-            if (size != 0 && page != -1) {
-                Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy));
-                return this.productRepository.findByBrandIdAndRequestStatus(optionalBrand.get().getId(),
-                        status.toLowerCase(), pageable).toList();
-            } else {
-                return this.productRepository.findByBrandIdAndRequestStatus(optionalBrand.get().getId(),
-                        status.toLowerCase());
-            }
-        } else {
-            throw new EntityNotFoundException("Brand with the specified ID was not found");
-        }
+        return productRepository.save(new Product(name, price, description, categoryId, brandId));
     }
 
     @Override
     public List<Product> findProductsByIds(List<Long> productIds) {
-        return this.productRepository.findAllById(productIds);
+        return productRepository.findAllById(productIds);
+    }
+
+    @Override
+    public List<Product> findProductsByNameLike(String name) {
+        return productRepository.findByNameLikeIgnoreCase(name);
+    }
+
+    @Override
+    public void updateProductStatusById(Long productId, String requestStatus) {
+        Product product = findProductById(productId);
+        product.setRequestStatus(requestStatus);
+        productRepository.save(product);
     }
 
 }

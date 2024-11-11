@@ -7,6 +7,5 @@ import ru.itis.marketplace.catalogservice.entity.ProductPhoto;
 import java.util.List;
 
 public interface ProductPhotoRepository extends JpaRepository<ProductPhoto, Long> {
-
     List<ProductPhoto> findByProductId(Long productId, Sort sort);
 }

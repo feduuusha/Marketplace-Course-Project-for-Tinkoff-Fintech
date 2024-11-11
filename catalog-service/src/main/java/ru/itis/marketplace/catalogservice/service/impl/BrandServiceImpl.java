@@ -1,6 +1,5 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -9,11 +8,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.catalogservice.entity.Brand;
+import ru.itis.marketplace.catalogservice.exception.BadRequestException;
+import ru.itis.marketplace.catalogservice.exception.NotFoundException;
 import ru.itis.marketplace.catalogservice.repository.BrandRepository;
 import ru.itis.marketplace.catalogservice.service.BrandService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,26 +23,26 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public Brand findBrandById(Long id) {
-        return brandRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Brand with ID: " + id + " not found"));
+        return brandRepository.findById(id).orElseThrow(() -> new NotFoundException("Brand with ID: " + id + " not found"));
     }
 
     @Override
     @Transactional
     public void updateBrandById(Long brandId, String name, String description, String linkToLogo, String status) {
         Brand brand = findBrandById(brandId);
-        if (!brand.getName().equals(name) && this.brandRepository.findByName(name).isPresent()) {
-            throw new EntityExistsException("Brand with name: " + name + " already exist");
+        if (!brand.getName().equals(name) && brandRepository.findByName(name).isPresent()) {
+            throw new BadRequestException("Brand with name: " + name + " already exist");
         }
         brand.setName(name);
         brand.setDescription(description);
         brand.setLinkToLogo(linkToLogo);
         brand.setRequestStatus(status.toLowerCase());
-        this.brandRepository.save(brand);
+        brandRepository.save(brand);
     }
 
     @Override
     public void deleteBrandById(Long id) {
-        this.brandRepository.deleteById(id);
+        brandRepository.deleteById(id);
     }
 
     @Override
@@ -59,20 +59,28 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public Brand createBrand(String name, String description, String linkToLogo) {
-        if (this.brandRepository.findByName(name).isPresent()) {
-            throw new EntityExistsException("Brand with name: " + name + " already exist");
+        if (brandRepository.findByName(name).isPresent()) {
+            throw new BadRequestException("Brand with name: " + name + " already exist");
         }
-        return this.brandRepository.save(new Brand(name, description, linkToLogo));
+        return brandRepository.save(new Brand(name, description, linkToLogo));
     }
 
     @Override
     public List<Brand> findAllBrandByIds(List<Long> brandIds) {
-        return this.brandRepository.findAllById(brandIds);
+        return brandRepository.findAllById(brandIds);
     }
 
     @Override
     public List<Brand> findBrandsByNameLike(String name) {
         return brandRepository.findByNameLikeIgnoreCase(name);
+    }
+
+    @Override
+    @Transactional
+    public void updateBrandStatusById(Long brandId, String requestStatus) {
+        Brand brand = findBrandById(brandId);
+        brand.setRequestStatus(requestStatus);
+        brandRepository.save(brand);
     }
 
 }

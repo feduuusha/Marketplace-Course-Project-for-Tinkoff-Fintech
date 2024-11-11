@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BrandRepository extends JpaRepository<Brand, Long>, JpaSpecificationExecutor<Brand> {
-
     Optional<Brand> findByName(String name);
     @Query("SELECT b FROM Brand b LEFT JOIN FETCH b.brandLinks links LEFT JOIN b.brandPhotos photos WHERE LOWER(b.name) LIKE LOWER(:name)")
     List<Brand> findByNameLikeIgnoreCase(String name);

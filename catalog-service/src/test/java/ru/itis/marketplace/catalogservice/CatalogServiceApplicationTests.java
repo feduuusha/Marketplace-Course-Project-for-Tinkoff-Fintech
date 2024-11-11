@@ -15,7 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class CatalogServiceApplicationTests {
 
     @Container
-    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
+    static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry propertyRegistry) {

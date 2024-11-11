@@ -9,13 +9,12 @@ import java.math.BigDecimal;
 
 public record NewProductPayload (
         @NotBlank
-        @Size(min = 3, max = 150)
+        @Size(max = 255)
         String name,
         @NotNull
         @Positive
         BigDecimal price,
         @NotBlank
-        @Size(max = 1000)
         String description,
         @NotNull
         @Positive
