@@ -23,6 +23,11 @@ jobs:
 
       - name: Maven Verify
         run: mvn -B clean verify
+        env:
+          AWS_ACCESS_KET_ID: ${{ secrets.AWS_ACCESS_KET_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          PAYMENT_API_KEY: ${{ secrets.PAYMENT_API_KEY }}
+          PAYMENT_SIGHING_SECRET: ${{ secrets.PAYMENT_SIGHING_SECRET }}
       - name: Test Coverage
         uses: codecov/codecov-action@v1
         with:

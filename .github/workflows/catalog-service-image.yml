@@ -1,0 +1,40 @@
+name: Build catalog-service image
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+
+env:
+  IMAGE_NAME: catalog-service
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 21
+      uses: actions/setup-java@v2
+      with:
+        java-version: '21'
+        distribution: 'zulu'
+    - name: Login to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Build a container image from our Spring Boot app using Paketo.io / Cloud Native Build Packs
+      run: cd catalog-service && mvn spring-boot:build-image -Dmodule.image.name=$IMAGE_NAME 
+      env:
+          AWS_ACCESS_KET_ID: ${{ secrets.AWS_ACCESS_KET_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          PAYMENT_API_KEY: ${{ secrets.PAYMENT_API_KEY }}
+          PAYMENT_SIGHING_SECRET: ${{ secrets.PAYMENT_SIGHING_SECRET }}
+    - name: Publish to GitHub Container Registry
+      run: |
+        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+        VERSION=latest
+        docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION
