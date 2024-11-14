@@ -1,7 +1,7 @@
 package ru.itis.marketplace.fileservice.service.impl;
 
 import org.springframework.stereotype.Service;
-import ru.itis.marketplace.fileservice.service.PhotoResizerService;
+import ru.itis.marketplace.fileservice.service.ImageResizerService;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,9 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Service
-public class PhotoResizerServiceImpl implements PhotoResizerService {
+public class ImageResizerServiceImpl implements ImageResizerService {
+
     @Override
-    public InputStream resizeImage(InputStream image, int width, int height) {
+    public InputStream resizeImage(InputStream image, int width, int height, String formatName) {
         try {
             BufferedImage originalImage = ImageIO.read(image);
 
@@ -26,15 +27,16 @@ public class PhotoResizerServiceImpl implements PhotoResizerService {
             double yScale = (double) height / originalImage.getHeight();
             double scale = Math.max(xScale, yScale);
 
-            g2d.drawImage(originalImage, 0, 0, (int) (originalImage.getWidth() * scale), (int) (originalImage.getHeight() * scale), null);
+            g2d.drawImage(originalImage, 0, 0, (int) (originalImage.getWidth() * scale),
+                    (int) (originalImage.getHeight() * scale), null);
             g2d.dispose();
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(resizedImage, "jpeg", outputStream);
+            ImageIO.write(resizedImage, formatName, outputStream);
             byte[] bytes = outputStream.toByteArray();
             return new ByteArrayInputStream(bytes);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Exception while resizing image: " + e.getMessage());
         }
     }
 }

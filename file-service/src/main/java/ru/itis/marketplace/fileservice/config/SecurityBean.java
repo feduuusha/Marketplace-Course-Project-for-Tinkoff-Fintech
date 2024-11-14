@@ -16,7 +16,7 @@ public class SecurityBean {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
-                                .requestMatchers("/api/v1/file-service/files/*")
+                                .requestMatchers("/api/v1/file-service/images/*")
                                 .hasRole("SERVICE")
                                 .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
