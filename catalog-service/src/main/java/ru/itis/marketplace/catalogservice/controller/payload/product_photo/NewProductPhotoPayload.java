@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 public record NewProductPhotoPayload (
         @NotBlank
-        @Size(max = 1000)
+        @Size(max = 2048)
         String url,
         @Positive
         @NotNull

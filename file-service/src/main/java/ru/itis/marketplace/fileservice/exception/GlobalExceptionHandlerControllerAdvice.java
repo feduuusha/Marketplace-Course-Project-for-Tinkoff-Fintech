@@ -1,4 +1,4 @@
-package ru.itis.marketplace.catalogservice.exception;
+package ru.itis.marketplace.fileservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -18,16 +18,6 @@ public class GlobalExceptionHandlerControllerAdvice extends ResponseEntityExcept
     public ProblemDetail handleBadRequestException(HttpServletRequest request, BadRequestException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
         problemDetail.setTitle("Bad Request");
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setType(URI.create(PROBLEM_DETAIL_TITLE));
-        return problemDetail;
-    }
-
-
-    @ExceptionHandler(NotFoundException.class)
-    public ProblemDetail handleNotFoundException(HttpServletRequest request, NotFoundException exception) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
-        problemDetail.setTitle("Resource Not Found");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setType(URI.create(PROBLEM_DETAIL_TITLE));
         return problemDetail;

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 public record NewProductSizePayload(
         @NotBlank
-        @Size(max = 1000)
+        @Size(max = 255)
         String name
 ) {
 }

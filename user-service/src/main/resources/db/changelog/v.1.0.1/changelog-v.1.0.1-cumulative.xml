@@ -10,5 +10,6 @@
 
     <include file="2024-11-08-insert-base-roles.xml" relativeToChangelogFile="true"/>
     <include file="2024-11-08-insert-base-admin-user.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-08-insert-admin-roles.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

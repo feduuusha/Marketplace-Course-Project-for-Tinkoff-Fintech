@@ -7,5 +7,5 @@ import ru.itis.marketplace.catalogservice.entity.BrandPhoto;
 import java.util.List;
 
 public interface BrandPhotoRepository extends JpaRepository<BrandPhoto, Long> {
-    List<BrandPhoto> findAllByBrandId(Long brandId, Sort sort);
+    List<BrandPhoto> findByBrandId(Long brandId, Sort sort);
 }

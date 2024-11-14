@@ -3,15 +3,14 @@ package ru.itis.marketplace.catalogservice.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.itis.marketplace.catalogservice.entity.Product;
 import ru.itis.marketplace.catalogservice.entity.ProductSize;
+import ru.itis.marketplace.catalogservice.exception.BadRequestException;
+import ru.itis.marketplace.catalogservice.exception.NotFoundException;
 import ru.itis.marketplace.catalogservice.repository.ProductRepository;
 import ru.itis.marketplace.catalogservice.repository.ProductSizeRepository;
 import ru.itis.marketplace.catalogservice.service.ProductSizeService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,24 +21,26 @@ public class ProductSizeServiceImpl implements ProductSizeService {
 
     @Override
     public List<ProductSize> findAllProductSizes(Long productId) {
-        return this.productSizeRepository.findByProductId(productId);
+        productRepository
+                .findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product with ID: " + productId + " not found"));
+        return productSizeRepository.findByProductId(productId);
     }
 
     @Override
     @Transactional
     public ProductSize createProductSize(Long productId, String name) {
-        Optional<Product> optionalProduct = this.productRepository.findById(productId);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            return this.productSizeRepository.save(new ProductSize(name, product));
-        } else {
-            throw new NoSuchElementException("Product with the specified ID was not found");
+        productRepository
+                .findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product with ID: " + productId + " not found"));
+        if (productSizeRepository.findByName(name).isPresent()) {
+            throw new BadRequestException("Product size with name: " + name + " already exist");
         }
+        return productSizeRepository.save(new ProductSize(name, productId));
     }
 
     @Override
-    @Transactional
     public void deleteAllProductSizesById(Long brandId, List<Long> sizeIds) {
-        this.productSizeRepository.deleteAllByIdInBatch(sizeIds);
+        productSizeRepository.deleteAllByIdInBatch(sizeIds);
     }
 }

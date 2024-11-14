@@ -5,10 +5,10 @@ import jakarta.validation.constraints.Size;
 
 public record NewBrandLinkPayload(
         @NotBlank
-        @Size(max = 1000)
+        @Size(max = 2048)
         String url,
         @NotBlank
-        @Size(max = 100)
+        @Size(max = 255)
         String name
         ) {
 }

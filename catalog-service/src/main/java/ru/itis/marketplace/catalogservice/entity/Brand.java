@@ -1,9 +1,14 @@
 package ru.itis.marketplace.catalogservice.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Setter
@@ -19,9 +24,9 @@ public class Brand {
     private String description;
     private String linkToLogo;
     private String requestStatus = "under_consideration";
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.REMOVE, targetEntity = BrandPhoto.class)
+    @OneToMany(mappedBy = "brandId")
     private List<BrandPhoto> brandPhotos;
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.REMOVE, targetEntity = BrandLink.class)
+    @OneToMany(mappedBy = "brandId")
     private List<BrandLink> brandLinks;
 
     public Brand(String name, String description, String linkToLogo) {
@@ -30,10 +35,19 @@ public class Brand {
         this.linkToLogo = linkToLogo;
     }
 
-    public Brand(Long id, String name, String description, String linkToLogo) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.linkToLogo = linkToLogo;
+    @Override
+    public final boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null) return false;
+        Class<?> oEffectiveClass = object instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : object.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Brand brand = (Brand) object;
+        return getId() != null && Objects.equals(getId(), brand.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }
