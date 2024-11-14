@@ -26,7 +26,7 @@ public class ProductSizeRestController {
     }
 
     @PostMapping("/{productId:\\d+}/sizes")
-    public ResponseEntity<?> createProductSize(@PathVariable Long productId,
+    public ResponseEntity<ProductSize> createProductSize(@PathVariable Long productId,
                                                @Valid @RequestBody NewProductSizePayload payload,
                                                UriComponentsBuilder uriComponentsBuilder) {
         ProductSize productSize = productSizeService.createProductSize(productId, payload.name());
