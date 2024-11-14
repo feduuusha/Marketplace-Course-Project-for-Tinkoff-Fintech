@@ -27,7 +27,7 @@ public class CategoryRestController {
     }
 
     @PutMapping(path = "/{categoryId:\\d+}")
-    public ResponseEntity<?> updateCategoryById(@PathVariable Long categoryId,
+    public ResponseEntity<Void> updateCategoryById(@PathVariable Long categoryId,
                                                 @Valid @RequestBody UpdateCategoryPayload payload) {
         categoryService.updateCategoryById(categoryId, payload.name());
         return ResponseEntity.noContent().build();
@@ -40,7 +40,7 @@ public class CategoryRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCategory(@Valid @RequestBody NewCategoryPayload payload,
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody NewCategoryPayload payload,
                                             UriComponentsBuilder uriComponentsBuilder) {
         Category category = categoryService.createCategory(payload.name());
         return ResponseEntity

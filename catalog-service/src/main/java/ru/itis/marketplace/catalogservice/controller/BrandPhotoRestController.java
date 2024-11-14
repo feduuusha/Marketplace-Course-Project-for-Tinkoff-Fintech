@@ -33,7 +33,7 @@ public class BrandPhotoRestController {
     }
 
     @PostMapping("/{brandId:\\d+}/photos")
-    public ResponseEntity<?> createBrandPhoto(@PathVariable Long brandId,
+    public ResponseEntity<BrandPhoto> createBrandPhoto(@PathVariable Long brandId,
                                               @Valid @RequestBody NewBrandPhotoPayload payload,
                                               UriComponentsBuilder uriComponentsBuilder) {
         BrandPhoto brandPhoto = brandPhotoService.createBrandPhoto(brandId, payload.url(), payload.sequenceNumber());

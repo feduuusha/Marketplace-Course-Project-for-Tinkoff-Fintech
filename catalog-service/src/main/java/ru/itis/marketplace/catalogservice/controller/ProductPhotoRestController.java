@@ -33,7 +33,7 @@ public class ProductPhotoRestController {
     }
 
     @PostMapping("/{productId:\\d+}/photos")
-    public ResponseEntity<?> createProductPhoto(@Valid @RequestBody NewProductPhotoPayload payload,
+    public ResponseEntity<ProductPhoto> createProductPhoto(@Valid @RequestBody NewProductPhotoPayload payload,
                                            @PathVariable Long productId,
                                            UriComponentsBuilder uriComponentsBuilder) {
         ProductPhoto productPhoto = productPhotoService
