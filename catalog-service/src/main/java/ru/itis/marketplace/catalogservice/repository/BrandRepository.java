@@ -16,7 +16,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long>, JpaSpecific
     @Query("SELECT b FROM Brand b LEFT JOIN FETCH b.brandLinks links LEFT JOIN b.brandPhotos photos WHERE LOWER(b.name) LIKE LOWER(:name)")
     List<Brand> findByNameLikeIgnoreCase(String name);
 
-    static Specification<Brand> buildFindALlSpecificationByStatus(String status) {
+    static Specification<Brand> buildFindAllSpecificationByStatus(String status) {
         return (root, query, criteriaBuilder) -> {
             root.fetch("brandLinks");
             root.fetch("brandPhotos");

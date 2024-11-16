@@ -3,13 +3,13 @@ package ru.itis.marketplace.catalogservice.controller.payload.product;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 
 public record NewProductPayload (
         @NotBlank
-        @Size(max = 255)
+        @Length(max = 255)
         String name,
         @NotNull
         @Positive

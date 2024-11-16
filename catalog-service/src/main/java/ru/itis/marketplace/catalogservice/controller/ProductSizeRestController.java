@@ -44,5 +44,11 @@ public class ProductSizeRestController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{productId:\\d+}/sizes/{sizeId}")
+    public ResponseEntity<ProductSize> findSizeByIdAndProductId(@PathVariable Long productId,
+                                                                @PathVariable Long sizeId) {
+        return ResponseEntity.ok(productSizeService.findSizeByIdAndProductId(productId, sizeId));
+    }
+
 
 }
