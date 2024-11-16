@@ -1,6 +1,7 @@
 package ru.itis.marketplace.fileservice.controller;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,8 +20,8 @@ public class ImageRestController {
     @PostMapping(value = "/{bucketName}")
     public String uploadImage(@NotNull @PathVariable String bucketName,
                               @NotNull @RequestBody MultipartFile file,
-                              @RequestParam Integer width,
-                              @RequestParam Integer height) {
+                              @Positive @RequestParam Integer width,
+                              @Positive @RequestParam Integer height) {
         return imageService.uploadImage(bucketName, file, width, height);
     }
 
