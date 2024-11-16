@@ -12,7 +12,7 @@ public record NewCartItemPayload(
         @Positive
         Long sizeId,
         @NotNull
-        @Min(1)
+        @Positive
         Long quantity
 ) {
 }

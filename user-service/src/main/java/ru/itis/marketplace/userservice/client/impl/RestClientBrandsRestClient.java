@@ -2,6 +2,7 @@ package ru.itis.marketplace.userservice.client.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import ru.itis.marketplace.userservice.exception.UnavailableServiceException;
 import ru.itis.marketplace.userservice.client.BrandsRestClient;
@@ -14,7 +15,7 @@ public class RestClientBrandsRestClient implements BrandsRestClient {
     @Override
     public boolean brandWithIdExist(Long brandId) {
         try {
-            this.restClient
+            restClient
                     .get()
                     .uri("/api/v1/catalog/brands/{brandId}", brandId)
                     .retrieve()
@@ -22,8 +23,10 @@ public class RestClientBrandsRestClient implements BrandsRestClient {
             return true;
         } catch (HttpClientErrorException.NotFound e) {
             return false;
-        } catch (Exception e) {
+        } catch (HttpServerErrorException e) {
             throw new UnavailableServiceException("Catalog service is unavailable, because: " + e.getMessage());
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
     }
 }
