@@ -43,4 +43,15 @@ public class ProductSizeServiceImpl implements ProductSizeService {
     public void deleteAllProductSizesById(Long brandId, List<Long> sizeIds) {
         productSizeRepository.deleteAllByIdInBatch(sizeIds);
     }
+
+    @Override
+    public ProductSize findSizeByIdAndProductId(Long productId, Long sizeId) {
+        ProductSize size = productSizeRepository
+                .findById(sizeId)
+                .orElseThrow(() -> new NotFoundException("Size with ID: " + sizeId + " not found"));
+        if (!productId.equals(size.getProductId())) {
+            throw new BadRequestException("Size with ID: " + sizeId + " belongs to Product with ID: " + size.getProductId());
+        }
+        return size;
+    }
 }

@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface ProductsRestClient {
     boolean productWithIdAndWithSizeIdExist(Long productId, Long sizeId);
-
     List<Product> findProductsByIds(List<Long> ids);
 }

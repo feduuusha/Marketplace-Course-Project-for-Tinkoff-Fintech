@@ -3,11 +3,11 @@ package ru.itis.marketplace.catalogservice.controller.payload.product_photo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
 
 public record NewProductPhotoPayload (
         @NotBlank
-        @Size(max = 2048)
+        @Length(max = 2048)
         String url,
         @Positive
         @NotNull

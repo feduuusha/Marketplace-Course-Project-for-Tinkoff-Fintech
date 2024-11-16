@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -18,14 +17,12 @@ import java.util.List;
 @Table(name = "order")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerOrder {
-
+public class Order {
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "order_seq")
     @SequenceGenerator(name = "order_seq", sequenceName = "order_seq", allocationSize = 1)
     private Long id;
     private String paymentLink;
-    @Column(unique = true)
     private String paymentId;
     private String country;
     private String locality;
@@ -33,10 +30,8 @@ public class CustomerOrder {
     private String postalCode;
     private String street;
     private String houseNumber;
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private MarketPlaceUser user;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private Long userId;
+    @OneToMany(mappedBy = "orderId", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<OrderItem> orderItems;
     private String status;
     private String description;
@@ -45,4 +40,19 @@ public class CustomerOrder {
     @CreationTimestamp
     private Instant creationDateTime;
 
+    public Order(String paymentId, String country, String locality, String region,
+                 String postalCode, String street, String houseNumber, Long userId, List<OrderItem> orderItems,
+                 String status, String description) {
+        this.paymentId = paymentId;
+        this.country = country;
+        this.locality = locality;
+        this.region = region;
+        this.postalCode = postalCode;
+        this.street = street;
+        this.houseNumber = houseNumber;
+        this.userId = userId;
+        this.orderItems = orderItems;
+        this.status = status;
+        this.description = description;
+    }
 }

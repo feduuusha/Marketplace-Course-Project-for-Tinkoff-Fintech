@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
-import java.util.Set;
 
 @Entity
 @Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
-public class MarketPlaceUser {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
@@ -26,14 +25,14 @@ public class MarketPlaceUser {
     private String username;
     @JsonIgnore
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "role_id") }
     )
     private Collection<Role> roles;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_authorities",
             joinColumns = { @JoinColumn(name = "user_id") },
@@ -41,8 +40,8 @@ public class MarketPlaceUser {
     )
     private Collection<Authority> authorities;
 
-    public MarketPlaceUser(String email, String phoneNumber, String firstName, String lastName,
-                           String username, String password, Set<Role> roles) {
+    public User(String email, String phoneNumber, String firstName, String lastName,
+                String username, String password, Collection<Role> roles) {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.firstName = firstName;

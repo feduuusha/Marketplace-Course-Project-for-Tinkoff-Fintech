@@ -20,26 +20,25 @@ public class RestClientProductsRestClient implements ProductsRestClient {
     @Override
     public boolean productWithIdAndWithSizeIdExist(Long productId, Long sizeId) {
         try {
-            Product product = this.restClient
+            restClient
                     .get()
-                    .uri("/api/v1/catalog/products/{productId}", productId)
+                    .uri("/api/v1/catalog/products/{productId}/sizes/{sizeId}", productId, sizeId)
                     .retrieve()
-                    .body(Product.class);
-            if (product != null && product.sizes() != null) {
-                return product.sizes().stream().anyMatch(productSize -> productSize.id().equals(sizeId));
-            }
+                    .toBodilessEntity();
+            return true;
+        } catch (HttpClientErrorException.NotFound | HttpClientErrorException.BadRequest exception) {
             return false;
-        } catch (HttpClientErrorException.NotFound exception) {
-            return false;
-        } catch (Exception e) {
+        } catch (HttpServerErrorException e) {
             throw new UnavailableServiceException("Catalog service is unavailable, because: " + e.getMessage());
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
     }
 
     @Override
     public List<Product> findProductsByIds(List<Long> ids) {
         try {
-            return this.restClient
+            return restClient
                     .get()
                     .uri("/api/v1/catalog/products/by-ids/{productIds}", String.join(",", ids.stream().map(String::valueOf).toList()))
                     .retrieve()

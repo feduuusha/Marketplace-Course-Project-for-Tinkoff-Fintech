@@ -52,7 +52,7 @@ public class BrandServiceImpl implements BrandService {
         if (pageSize != null && page != null) {
             pageable = PageRequest.of(page, pageSize, sort);
         }
-        Specification<Brand> statusSpec = BrandRepository.buildFindALlSpecificationByStatus(status);
+        Specification<Brand> statusSpec = BrandRepository.buildFindAllSpecificationByStatus(status);
         return brandRepository.findAll(statusSpec, pageable).toList();
     }
 

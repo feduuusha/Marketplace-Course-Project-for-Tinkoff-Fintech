@@ -41,8 +41,10 @@ public class PaymentServiceImpl implements PaymentService {
                             .setMode(SessionCreateParams.Mode.PAYMENT)
                             .setSuccessUrl(successUrl)
                             .setCancelUrl(cancelUrl)
-                            .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().setDescription(paymentId).build())
-                            .setClientReferenceId(paymentId);
+                            .setPaymentIntentData(SessionCreateParams.PaymentIntentData
+                                    .builder()
+                                    .setDescription(paymentId)
+                                    .build());
             for (var orderItem : orderItems) {
                 var product = products.get(orderItem.getProductId());
                 BigDecimal bd = product.price().setScale(2, RoundingMode.HALF_UP);
@@ -75,7 +77,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
             return Session.create(params.build()).getUrl();
         } catch (StripeException exception) {
-            throw new UnavailableServiceException(exception.getMessage());
+            throw new UnavailableServiceException("Stipe payment is unavailable: " + exception.getMessage());
         } catch (Exception exception) {
             throw new IllegalStateException(exception);
         }

@@ -15,13 +15,11 @@ public class UserBrand {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_brands_seq")
     @SequenceGenerator(name = "users_brands_seq", sequenceName = "users_brands_seq", allocationSize = 1)
     private Long id;
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id", name = "user_id")
-    private MarketPlaceUser user;
+    private Long userId;
     private Long brandId;
 
-    public UserBrand(MarketPlaceUser user, Long brandId) {
-        this.user = user;
+    public UserBrand(Long userId, Long brandId) {
+        this.userId = userId;
         this.brandId = brandId;
     }
 }
