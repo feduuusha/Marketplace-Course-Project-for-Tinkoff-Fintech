@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="2024-11-06-create-user-seq" author="Fyodor Voropaev">
-        <createSequence sequenceName="user_seq"  startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="user_seq"  startValue="10" incrementBy="1"/>
     </changeSet>
 
 </databaseChangeLog>

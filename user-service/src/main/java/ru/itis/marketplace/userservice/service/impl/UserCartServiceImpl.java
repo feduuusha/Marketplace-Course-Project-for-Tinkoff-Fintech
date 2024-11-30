@@ -1,5 +1,6 @@
 package ru.itis.marketplace.userservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -21,6 +22,7 @@ public class UserCartServiceImpl implements UserCartService {
     private final UserCartRepository cartRepository;
     private final UserRepository userRepository;
     private final ProductsRestClient productsRestClient;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public List<CartItem> findCartItemsByUserId(Long userId, String sortedBy) {
@@ -44,7 +46,9 @@ public class UserCartServiceImpl implements UserCartService {
             throw new BadRequestException("Cart Item with user ID: " + userId + ", with product ID: "
                     + productId + ", with size ID: " + sizeId + " already exist");
         }
-        return cartRepository.save(new CartItem(userId, productId, sizeId, quantity));
+        var cartItem = cartRepository.save(new CartItem(userId, productId, sizeId, quantity));
+        meterRegistry.counter("count of created cart items").increment();
+        return cartItem;
     }
 
     @Override

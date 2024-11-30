@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class ProductSizeServiceImpl implements ProductSizeService {
 
     private final ProductSizeRepository productSizeRepository;
     private final ProductRepository productRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public List<ProductSize> findAllProductSizes(Long productId) {
@@ -36,7 +38,9 @@ public class ProductSizeServiceImpl implements ProductSizeService {
         if (productSizeRepository.findByName(name).isPresent()) {
             throw new BadRequestException("Product size with name: " + name + " already exist");
         }
-        return productSizeRepository.save(new ProductSize(name, productId));
+        var productSize = productSizeRepository.save(new ProductSize(name, productId));
+        meterRegistry.counter("count of created product sizes").increment();
+        return productSize;
     }
 
     @Override

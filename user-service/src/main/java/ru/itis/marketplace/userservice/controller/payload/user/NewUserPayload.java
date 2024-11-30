@@ -8,6 +8,7 @@ import java.util.Set;
 public record NewUserPayload(
     @Email
     @Length(max = 255)
+    @NotBlank
     String email,
     @Length(max=1+15)
     @Pattern(regexp = "^\\+[0-9]+$")

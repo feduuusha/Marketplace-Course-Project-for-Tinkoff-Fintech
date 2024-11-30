@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -17,6 +18,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public Category findCategoryById(Long id) {
@@ -43,7 +45,9 @@ public class CategoryServiceImpl implements CategoryService {
     public Category createCategory(String name) {
         if (categoryRepository.findByName(name).isPresent())
             throw new BadRequestException("Category with name: " + name + " already exist");
-        return categoryRepository.save(new Category(name));
+        var category = categoryRepository.save(new Category(name));
+        meterRegistry.counter("count of created categories").increment();
+        return category;
     }
 
     @Override

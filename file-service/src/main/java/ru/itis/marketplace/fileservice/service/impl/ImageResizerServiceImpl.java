@@ -1,5 +1,7 @@
 package ru.itis.marketplace.fileservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.fileservice.service.ImageResizerService;
 
@@ -12,7 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Service
+@RequiredArgsConstructor
 public class ImageResizerServiceImpl implements ImageResizerService {
+
+    private final MeterRegistry meterRegistry;
 
     @Override
     public InputStream resizeImage(InputStream image, int width, int height, String formatName) {
@@ -34,6 +39,7 @@ public class ImageResizerServiceImpl implements ImageResizerService {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(resizedImage, formatName, outputStream);
             byte[] bytes = outputStream.toByteArray();
+            meterRegistry.counter("count of resized images").increment();
             return new ByteArrayInputStream(bytes);
         } catch (IOException e) {
             throw new IllegalStateException("Exception while resizing image: " + e.getMessage());

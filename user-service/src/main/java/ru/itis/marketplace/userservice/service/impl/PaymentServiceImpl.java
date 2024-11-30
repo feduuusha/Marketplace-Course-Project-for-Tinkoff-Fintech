@@ -4,6 +4,8 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
+
+    private final MeterRegistry meterRegistry;
 
     @Value("${payment.success-url}")
     private String successUrl;
@@ -45,9 +49,15 @@ public class PaymentServiceImpl implements PaymentService {
                                     .builder()
                                     .setDescription(paymentId)
                                     .build());
+            DistributionSummary numberOfItems = DistributionSummary.builder("number of different items in order").serviceLevelObjectives(1, 2, 5, 10).register(meterRegistry);
+            numberOfItems.record(orderItems.size());
             for (var orderItem : orderItems) {
                 var product = products.get(orderItem.getProductId());
                 BigDecimal bd = product.price().setScale(2, RoundingMode.HALF_UP);
+                DistributionSummary orderProductPrice = DistributionSummary.builder("order product price").serviceLevelObjectives(500d, 1000d, 2000d, 5000d, 10000d).register(meterRegistry);
+                orderProductPrice.record(bd.doubleValue());
+                DistributionSummary quantityOfProduct = DistributionSummary.builder("quantity of a specific product").serviceLevelObjectives(1, 2, 5, 10).register(meterRegistry);
+                quantityOfProduct.record(orderItem.getQuantity());
                 var productData = SessionCreateParams.LineItem.PriceData.ProductData
                         .builder()
                         .setName(product.name())
@@ -75,7 +85,9 @@ public class PaymentServiceImpl implements PaymentService {
                                 .build()
                 );
             }
-            return Session.create(params.build()).getUrl();
+            var sessionUrl = Session.create(params.build()).getUrl();
+            meterRegistry.counter("count of payments").increment();
+            return sessionUrl;
         } catch (StripeException exception) {
             throw new UnavailableServiceException("Stipe payment is unavailable: " + exception.getMessage());
         } catch (Exception exception) {

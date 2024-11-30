@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.util.Collection;
 
 @Entity
+@Table(name = "`role`")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,7 +18,7 @@ import java.util.Collection;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_seq")
-    @SequenceGenerator(name = "role_seq", sequenceName = "role_seq", allocationSize = 1)
+    @SequenceGenerator(name = "role_seq", sequenceName = "role_seq", allocationSize = 1, initialValue = 10)
     private Long id;
     private String name;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

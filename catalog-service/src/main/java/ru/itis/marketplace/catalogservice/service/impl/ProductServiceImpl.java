@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public Product findProductById(Long id) {
@@ -74,7 +76,9 @@ public class ProductServiceImpl implements ProductService {
         if (productRepository.findByName(name).isPresent()) {
             throw new BadRequestException("Product with name: " + name + " already exist");
         }
-        return productRepository.save(new Product(name, price, description, categoryId, brandId));
+        var product = productRepository.save(new Product(name, price, description, categoryId, brandId));
+        meterRegistry.counter("count of created products").increment();
+        return product;
     }
 
     @Override

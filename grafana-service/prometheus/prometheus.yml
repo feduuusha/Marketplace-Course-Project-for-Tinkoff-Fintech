@@ -1,0 +1,32 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+scrape_configs:
+  - job_name: 'spring-boot-catalog'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['catalog-service:8081']
+    basic_auth:
+      username: 'catalog_service_user'
+      password: '19022602'
+  - job_name: 'spring-boot-file'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'file-service:8083' ]
+    basic_auth:
+      username: 'file_service_user'
+      password: '19022602'
+  - job_name: 'spring-boot-user'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'user-service:8082' ]
+    basic_auth:
+      username: 'user_service_user'
+      password: '19022602'
+rule_files:
+  - 'alert-rules.yml'
+alerting:
+  alertmanagers:
+    - scheme: http
+    - static_configs:
+        - targets: ['alertmanager:9093']
