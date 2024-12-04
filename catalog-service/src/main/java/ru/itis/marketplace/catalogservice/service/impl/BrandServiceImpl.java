@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import java.util.List;
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public Brand findBrandById(Long id) {
@@ -46,6 +48,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public List<Brand> findAllBrands(String status, Integer pageSize, Integer page, String sortedBy) {
         Sort sort = sortedBy == null ? Sort.unsorted() : Sort.by(sortedBy);
         Pageable pageable = Pageable.unpaged(sort);
@@ -53,7 +56,10 @@ public class BrandServiceImpl implements BrandService {
             pageable = PageRequest.of(page, pageSize, sort);
         }
         Specification<Brand> statusSpec = BrandRepository.buildFindAllSpecificationByStatus(status);
-        return brandRepository.findAll(statusSpec, pageable).toList();
+        var brands = brandRepository.findAll(statusSpec, pageable).toList();
+        brandRepository.joinLinksToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        brandRepository.joinPhotosToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        return brands;
     }
 
 
@@ -62,7 +68,9 @@ public class BrandServiceImpl implements BrandService {
         if (brandRepository.findByName(name).isPresent()) {
             throw new BadRequestException("Brand with name: " + name + " already exist");
         }
-        return brandRepository.save(new Brand(name, description, linkToLogo));
+        var brand = brandRepository.save(new Brand(name, description, linkToLogo));
+        meterRegistry.counter("count of created brands").increment();
+        return brand;
     }
 
     @Override
@@ -71,8 +79,12 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public List<Brand> findBrandsByNameLike(String name) {
-        return brandRepository.findByNameLikeIgnoreCase(name);
+        var brands = brandRepository.findByNameLikeIgnoreCase(name);
+        brandRepository.joinLinksToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        brandRepository.joinPhotosToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        return brands;
     }
 
     @Override

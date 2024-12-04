@@ -7,6 +7,7 @@ import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.StripeObject;
 import com.stripe.net.Webhook;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.userservice.exception.BadRequestException;
@@ -22,16 +23,18 @@ public class StripeWebHookServiceImpl implements StripeWebHookService {
 
     private final ObjectMapper objectMapper;
     private final Map<String, WebHookHandler> eventHandlers;
+    private final MeterRegistry meterRegistry;
 
     @Value("${payment.signing-secret}")
     private String signingSecret;
 
-    public StripeWebHookServiceImpl(ObjectMapper objectMapper, List<WebHookHandler> webHookHandlerList) {
+    public StripeWebHookServiceImpl(ObjectMapper objectMapper, List<WebHookHandler> webHookHandlerList, MeterRegistry meterRegistry) {
         this.objectMapper = objectMapper;
         this.eventHandlers = new HashMap<>();
         webHookHandlerList.forEach(it ->
                 it.getSupportedEventTypes()
                         .forEach((eventType) -> eventHandlers.put(eventType, it)));
+        this.meterRegistry = meterRegistry;
     }
 
     @Override
@@ -59,6 +62,7 @@ public class StripeWebHookServiceImpl implements StripeWebHookService {
                 throw new IllegalStateException("WebHook with event type: " + eventType + " is unsupported");
             }
             handler.handle(paymentId.asText());
+            meterRegistry.counter("count of handled webhooks").increment();
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Exception when parse stripe object: " + e.getMessage());
         }

@@ -1,5 +1,6 @@
 package ru.itis.marketplace.userservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public User findUserByUsername(String username) {
@@ -61,8 +63,10 @@ public class UserServiceImpl implements UserService {
                         .findByName(roleName)
                         .orElseThrow(() -> new BadRequestException("Role with name: " + roleName + " does not exist")))
                 .collect(Collectors.toSet());
-        return userRepository.save(new User(email, phoneNumber, firstName, lastName,
+        var user = userRepository.save(new User(email, phoneNumber, firstName, lastName,
                 username, bCryptPasswordEncoder.encode(password), userRoles));
+        meterRegistry.counter("count of new users").increment();
+        return user;
     }
 
     @Override

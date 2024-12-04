@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class BrandLinkServiceImpl implements BrandLinkService {
 
     private final BrandLinkRepository brandLinkRepository;
     private final BrandRepository brandRepository;
+    private final MeterRegistry meterRegistry;
+
     @Override
     public List<BrandLink> findAllBrandLinks(Long brandId) {
         brandRepository.findById(brandId).orElseThrow(() -> new NotFoundException("Brand with ID: " + brandId + " not found"));
@@ -31,7 +34,9 @@ public class BrandLinkServiceImpl implements BrandLinkService {
         if (brandLinkRepository.findByName(name).isPresent()) {
             throw new BadRequestException("Brand link with name: " + name + " already exist");
         }
-        return brandLinkRepository.save(new BrandLink(url, name, brandId));
+        var brandLink = brandLinkRepository.save(new BrandLink(url, name, brandId));
+        meterRegistry.counter("count of created brand links").increment();
+        return brandLink;
     }
 
     @Override

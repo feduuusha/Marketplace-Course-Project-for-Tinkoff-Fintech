@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ public class ProductPhotoServiceImpl implements ProductPhotoService {
 
     private final ProductPhotoRepository productPhotoRepository;
     private final ProductRepository productRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public List<ProductPhoto> findProductPhotos(Long productId) {
@@ -39,6 +41,8 @@ public class ProductPhotoServiceImpl implements ProductPhotoService {
         productRepository
                 .findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product with ID: " + productId + " not found"));
-        return productPhotoRepository.save(new ProductPhoto(url, sequenceNumber, productId));
+        var productPhoto = productPhotoRepository.save(new ProductPhoto(url, sequenceNumber, productId));
+        meterRegistry.counter("count of created product photos").increment();
+        return productPhoto;
     }
 }

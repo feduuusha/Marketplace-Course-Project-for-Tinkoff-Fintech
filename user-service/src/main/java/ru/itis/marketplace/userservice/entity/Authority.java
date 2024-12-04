@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
+@Table(name = "`authority`")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,7 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class Authority implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authority_seq")
-    @SequenceGenerator(name = "authority_seq", sequenceName = "authority_seq", allocationSize = 1)
+    @SequenceGenerator(name = "authority_seq", sequenceName = "authority_seq", allocationSize = 1, initialValue = 10)
     private Long id;
     @Column(name = "name")
     private String authority;

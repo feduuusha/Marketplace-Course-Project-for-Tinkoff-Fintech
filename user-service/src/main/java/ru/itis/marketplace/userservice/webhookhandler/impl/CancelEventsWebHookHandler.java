@@ -1,5 +1,6 @@
 package ru.itis.marketplace.userservice.webhookhandler.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.itis.marketplace.userservice.service.OrderService;
@@ -12,10 +13,12 @@ import java.util.List;
 public class CancelEventsWebHookHandler implements WebHookHandler {
 
     private final OrderService orderService;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public void handle(String paymentId) {
         orderService.updateOrderStatusByPaymentId(paymentId, "Order was canceled due to a payment error");
+        meterRegistry.counter("count of cancel payments").increment();
     }
 
     @Override
