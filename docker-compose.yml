@@ -203,6 +203,15 @@ services:
     networks:
       - marketplace_network
 
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    restart: unless-stopped
+    networks:
+      - marketplace_network
+
 
 volumes:
   elk_data:

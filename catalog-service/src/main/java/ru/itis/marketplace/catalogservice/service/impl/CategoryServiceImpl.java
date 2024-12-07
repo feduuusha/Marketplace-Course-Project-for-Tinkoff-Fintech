@@ -6,10 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.catalogservice.entity.Category;
+import ru.itis.marketplace.catalogservice.entity.ProductSize;
 import ru.itis.marketplace.catalogservice.exception.BadRequestException;
 import ru.itis.marketplace.catalogservice.exception.NotFoundException;
+import ru.itis.marketplace.catalogservice.kafka.KafkaProducer;
 import ru.itis.marketplace.catalogservice.repository.CategoryRepository;
 import ru.itis.marketplace.catalogservice.service.CategoryService;
+import ru.itis.marketplace.catalogservice.service.ProductService;
 
 import java.util.List;
 
@@ -18,7 +21,10 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductService productService;
+    private final KafkaProducer kafkaProducer;
     private final MeterRegistry meterRegistry;
+
 
     @Override
     public Category findCategoryById(Long id) {
@@ -37,6 +43,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategoryById(Long id) {
+        var products = productService.findAllProducts(null, null, null, null, null, null, null, null, id);
+        var sizeIds = products.stream().flatMap(product -> product.getSizes().stream()).map(ProductSize::getId).toList();
+        kafkaProducer.sendSizeIds(sizeIds);
         categoryRepository.deleteById(id);
     }
 

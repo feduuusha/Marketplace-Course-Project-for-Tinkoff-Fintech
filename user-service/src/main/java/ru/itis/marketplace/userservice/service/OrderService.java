@@ -18,5 +18,9 @@ public interface OrderService {
 
     List<Order> findOrdersByBrandId(Long brandId);
 
-    void updateOrderStatusByPaymentId(String paymentId, String orderStatus);
+    void updateOrderStatusAndPaymentIntentByPaymentId(String paymentId, String orderStatus, String paymentIntentId);
+    List<Order> findOrderThatContainsSizeIds(List<Long> sizeIds);
+    Order findByPaymentId(String paymentId);
+    void updateOrderItemsSetNewBrandIdForProductId(Long productId, Long newBrandId);
+    void deleteAllOrderItemsByOrderId(Long orderId);
 }

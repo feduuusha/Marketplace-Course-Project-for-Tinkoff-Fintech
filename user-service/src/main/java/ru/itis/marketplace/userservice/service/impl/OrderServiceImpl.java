@@ -1,5 +1,6 @@
 package ru.itis.marketplace.userservice.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import ru.itis.marketplace.userservice.entity.OrderItem;
 import ru.itis.marketplace.userservice.exception.BadRequestException;
 import ru.itis.marketplace.userservice.exception.NotFoundException;
 import ru.itis.marketplace.userservice.model.Product;
+import ru.itis.marketplace.userservice.repository.OrderItemRepository;
 import ru.itis.marketplace.userservice.repository.UserRepository;
 import ru.itis.marketplace.userservice.repository.OrderRepository;
 import ru.itis.marketplace.userservice.service.OrderService;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ProductsRestClient productsRestClient;
     private final UserRepository userRepository;
     private final PaymentService paymentService;
@@ -56,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
         userRepository
                 .findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with ID: " + userId + " not found"));
-        Order order = new Order(UUID.randomUUID().toString(), country, locality, region, postalCode, street, houseNumber, userId, new ArrayList<>(orderItems.size()), "Awaiting payment", description);
+        Order order = new Order(UUID.randomUUID().toString(), country, locality, region, postalCode, street, houseNumber, userId, null, "Awaiting payment", description);
 
         List<Long> productIds = orderItems
                 .stream()
@@ -67,6 +70,7 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .collect(Collectors.toMap(Product::id, Function.identity()));
 
+        var orderItemsList = new ArrayList<OrderItem>(orderItems.size());
         for (NewOrderItemPayload orderItem : orderItems) {
             if (!products.containsKey(orderItem.productId())) {
                 throw new BadRequestException("Product with ID: " + orderItem.productId() + " does not exist");
@@ -77,10 +81,13 @@ public class OrderServiceImpl implements OrderService {
                     .filter((size) -> size.id().equals(orderItem.productSizeId()))
                     .findFirst()
                     .orElseThrow(() -> new BadRequestException("Product with ID: " + product.id() + " does not have a size with ID: " + orderItem.productSizeId()));
-            order.getOrderItems().add(new OrderItem(product.id(), productSize.id(), product.brandId(), orderItem.quantity(), order.getId()));
+            orderItemsList.add(new OrderItem(product.id(), productSize.id(), product.brandId(), orderItem.quantity()));
         }
-        order.setPaymentLink(paymentService.createPayment(order.getPaymentId(), products, order.getOrderItems()));
-        return orderRepository.save(order);
+        order.setPaymentLink(paymentService.createPayment(order.getPaymentId(), products, orderItemsList));
+        var savedOrder = orderRepository.save(order);
+        orderItemsList.forEach((orderItem -> orderItem.setOrderId(savedOrder.getId())));
+        orderItemRepository.saveAll(orderItemsList);
+        return savedOrder;
     }
 
     @Override
@@ -121,11 +128,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrderStatusByPaymentId(String paymentId, String orderStatus) {
+    public void updateOrderStatusAndPaymentIntentByPaymentId(String paymentId, String orderStatus, String paymentIntentId) {
         Order order = orderRepository
                 .findByPaymentId(paymentId)
                 .orElseThrow(() -> new BadRequestException("Order with payment ID: " + paymentId + " not found"));
         order.setStatus(orderStatus);
+        order.setPaymentIntentId(paymentIntentId);
         orderRepository.save(order);
     }
+
+    @Override
+    public List<Order> findOrderThatContainsSizeIds(List<Long> sizeIds) {
+        return orderRepository.findOrderThatContainsSizeIds(sizeIds);
+    }
+
+    @Override
+    public Order findByPaymentId(String paymentId) {
+        return orderRepository
+                .findByPaymentId(paymentId)
+                .orElseThrow(() -> new NotFoundException("Order with paymentId: " + paymentId + " not found"));
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderItemsSetNewBrandIdForProductId(Long productId, Long newBrandId) {
+        orderItemRepository.updateBrandIdForProductWithId(productId, newBrandId);
+    }
+
+    @Override
+    public void deleteAllOrderItemsByOrderId(Long orderId) {
+        orderItemRepository.deleteByOrderId(orderId);
+    }
+
 }

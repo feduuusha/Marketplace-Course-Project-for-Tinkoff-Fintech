@@ -22,11 +22,10 @@ public class OrderItem {
     private Long quantity;
     private Long orderId;
 
-    public OrderItem(Long productId, Long sizeId, Long brandId, Long quantity, Long orderId) {
+    public OrderItem(Long productId, Long sizeId, Long brandId, Long quantity) {
         this.productId = productId;
         this.sizeId = sizeId;
         this.brandId = brandId;
         this.quantity = quantity;
-        this.orderId = orderId;
     }
 }

@@ -11,4 +11,5 @@ public interface UserCartService {
     void deleteCartItem(Long cartItemId);
     Long findSumOfItemQuantitiesByUserId(Long userId);
     void deleteAllItemFromUserCartById(Long userId);
+    void deleteCartItemsBySizeIds(List<Long> sizeIds);
 }

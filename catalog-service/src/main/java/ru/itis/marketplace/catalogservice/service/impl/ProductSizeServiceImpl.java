@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.itis.marketplace.catalogservice.entity.ProductSize;
 import ru.itis.marketplace.catalogservice.exception.BadRequestException;
 import ru.itis.marketplace.catalogservice.exception.NotFoundException;
+import ru.itis.marketplace.catalogservice.kafka.KafkaProducer;
 import ru.itis.marketplace.catalogservice.repository.ProductRepository;
 import ru.itis.marketplace.catalogservice.repository.ProductSizeRepository;
 import ru.itis.marketplace.catalogservice.service.ProductSizeService;
@@ -19,6 +20,7 @@ public class ProductSizeServiceImpl implements ProductSizeService {
 
     private final ProductSizeRepository productSizeRepository;
     private final ProductRepository productRepository;
+    private final KafkaProducer kafkaProducer;
     private final MeterRegistry meterRegistry;
 
     @Override
@@ -35,7 +37,8 @@ public class ProductSizeServiceImpl implements ProductSizeService {
         productRepository
                 .findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product with ID: " + productId + " not found"));
-        if (productSizeRepository.findByName(name).isPresent()) {
+        var sizes = productSizeRepository.findByProductId(productId);
+        if (sizes.stream().anyMatch(productSize -> productSize.getName().equals(name))) {
             throw new BadRequestException("Product size with name: " + name + " already exist");
         }
         var productSize = productSizeRepository.save(new ProductSize(name, productId));
@@ -45,6 +48,7 @@ public class ProductSizeServiceImpl implements ProductSizeService {
 
     @Override
     public void deleteAllProductSizesById(Long brandId, List<Long> sizeIds) {
+        kafkaProducer.sendSizeIds(sizeIds);
         productSizeRepository.deleteAllByIdInBatch(sizeIds);
     }
 

@@ -2,7 +2,9 @@ package ru.itis.marketplace.userservice.service.impl;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Refund;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.RefundCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -92,6 +94,22 @@ public class PaymentServiceImpl implements PaymentService {
             throw new UnavailableServiceException("Stipe payment is unavailable: " + exception.getMessage());
         } catch (Exception exception) {
             throw new IllegalStateException(exception);
+        }
+    }
+
+    @Override
+    public void refundPayment(String paymentIntentId) {
+        try {
+            Stripe.apiKey = apiKey;
+
+            RefundCreateParams params =
+                    RefundCreateParams.builder()
+                            .setPaymentIntent(paymentIntentId)
+                            .build();
+
+            Refund.create(params);
+        } catch (StripeException exception) {
+            throw new UnavailableServiceException("Stipe payment is unavailable: " + exception.getMessage());
         }
     }
 }

@@ -75,4 +75,10 @@ public class UserCartServiceImpl implements UserCartService {
     public void deleteAllItemFromUserCartById(Long userId) {
         cartRepository.deleteByUserId(userId);
     }
+
+    @Override
+    @Transactional
+    public void deleteCartItemsBySizeIds(List<Long> sizeIds) {
+        cartRepository.deleteAllBySizeIds(sizeIds);
+    }
 }

@@ -47,21 +47,17 @@ public class StripeWebHookServiceImpl implements StripeWebHookService {
         }
 
         EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-        StripeObject stripeObject;
-        if (dataObjectDeserializer.getObject().isPresent()) {
-            stripeObject = dataObjectDeserializer.getObject().get();
-        } else {
-            throw new BadRequestException("Event do not contains object");
-        }
+        StripeObject stripeObject = dataObjectDeserializer.getObject().orElseThrow(() ->  new BadRequestException("Event do not contains object"));
         try {
             var node = objectMapper.readTree(stripeObject.toJson());
             var paymentId = node.get("description");
+            var paymentIntentId = node.get("id");
             var eventType = event.getType();
             WebHookHandler handler = eventHandlers.get(eventType);
             if (handler == null) {
                 throw new IllegalStateException("WebHook with event type: " + eventType + " is unsupported");
             }
-            handler.handle(paymentId.asText());
+            handler.handle(paymentId.asText(), paymentIntentId.asText());
             meterRegistry.counter("count of handled webhooks").increment();
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Exception when parse stripe object: " + e.getMessage());

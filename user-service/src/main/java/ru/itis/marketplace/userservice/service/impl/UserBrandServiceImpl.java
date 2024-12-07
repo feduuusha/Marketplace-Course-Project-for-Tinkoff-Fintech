@@ -46,7 +46,8 @@ public class UserBrandServiceImpl implements UserBrandService {
     }
 
     @Override
-    public void deleteUserBrand(Long userId, Long brandId) {
+    @Transactional
+    public void deleteUserBrand(Long brandId) {
         userBrandRepository.deleteByBrandId(brandId);
     }
 
