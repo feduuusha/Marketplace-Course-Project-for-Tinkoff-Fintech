@@ -78,6 +78,34 @@
                         </exclude>
                     </excludes>
                 </configuration>
+
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>ru/itis/marketplace/fileservice/aspect/**</exclude>
+                        <exclude>ru/itis/marketplace/fileservice/config/**</exclude>
+                        <exclude>ru/itis/marketplace/fileservice/filter/**</exclude>
+                        <exclude>ru/itis/marketplace/fileservice/FileServiceApplication.class</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

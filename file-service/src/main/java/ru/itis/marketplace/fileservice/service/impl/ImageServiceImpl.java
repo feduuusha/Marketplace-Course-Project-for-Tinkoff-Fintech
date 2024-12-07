@@ -60,8 +60,7 @@ public class ImageServiceImpl implements ImageService {
             if (lastIndexOfDot == -1 || lastIndexOfDot == filename.length() - 1) {
                 throw new BadRequestException("File should have extension");
             }
-            if (width != null && height != null &&
-                    file.getContentType() != null && !file.getContentType().equals("image/svg+xml")) {
+            if (width != null && height != null && !"image/svg+xml".equals(file.getContentType())) {
                 inputStream = imageResizerService.resizeImage(inputStream, width, height,
                         filename.substring(lastIndexOfDot + 1));
             }

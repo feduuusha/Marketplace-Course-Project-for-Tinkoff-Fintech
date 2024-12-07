@@ -23,7 +23,7 @@ public class ImageResizerServiceImpl implements ImageResizerService {
     public InputStream resizeImage(InputStream image, int width, int height, String formatName) {
         try {
             BufferedImage originalImage = ImageIO.read(image);
-
+            if (originalImage == null) throw new IOException("Exception while read image");
             int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
             BufferedImage resizedImage = new BufferedImage(width, height, type);
             Graphics2D g2d = resizedImage.createGraphics();
