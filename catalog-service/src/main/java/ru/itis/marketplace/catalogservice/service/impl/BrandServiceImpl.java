@@ -9,10 +9,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.catalogservice.entity.Brand;
+import ru.itis.marketplace.catalogservice.entity.ProductSize;
 import ru.itis.marketplace.catalogservice.exception.BadRequestException;
 import ru.itis.marketplace.catalogservice.exception.NotFoundException;
+import ru.itis.marketplace.catalogservice.kafka.KafkaProducer;
 import ru.itis.marketplace.catalogservice.repository.BrandRepository;
 import ru.itis.marketplace.catalogservice.service.BrandService;
+import ru.itis.marketplace.catalogservice.service.ProductService;
 
 import java.util.List;
 
@@ -21,6 +24,8 @@ import java.util.List;
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
+    private final ProductService productService;
+    private final KafkaProducer kafkaProducer;
     private final MeterRegistry meterRegistry;
 
     @Override
@@ -44,6 +49,10 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public void deleteBrandById(Long id) {
+        var products = productService.findAllProducts(null, null, null, null, null, null, null, id, null);
+        var sizeIds = products.stream().flatMap(product -> product.getSizes().stream()).map(ProductSize::getId).toList();
+        kafkaProducer.sendSizeIds(sizeIds);
+        kafkaProducer.sendBrandIds(List.of(id));
         brandRepository.deleteById(id);
     }
 

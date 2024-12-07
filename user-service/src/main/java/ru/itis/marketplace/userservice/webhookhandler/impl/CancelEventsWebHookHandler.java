@@ -16,8 +16,8 @@ public class CancelEventsWebHookHandler implements WebHookHandler {
     private final MeterRegistry meterRegistry;
 
     @Override
-    public void handle(String paymentId) {
-        orderService.updateOrderStatusByPaymentId(paymentId, "Order was canceled due to a payment error");
+    public void handle(String paymentId, String paymentIntentId) {
+        orderService.updateOrderStatusAndPaymentIntentByPaymentId(paymentId, "canceled", paymentIntentId);
         meterRegistry.counter("count of cancel payments").increment();
     }
 

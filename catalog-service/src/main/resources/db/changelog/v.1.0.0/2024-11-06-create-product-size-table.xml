@@ -10,7 +10,7 @@
                 <constraints unique="true" nullable="false" primaryKey="true"/>
             </column>
             <column name="name" type="varchar(255)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="product_id" type="bigint">
                 <constraints deleteCascade="true" nullable="false" foreignKeyName="fk_product_size_product" referencedColumnNames="id" referencedTableName="product"/>

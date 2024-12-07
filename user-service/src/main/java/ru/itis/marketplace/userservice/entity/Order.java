@@ -24,6 +24,7 @@ public class Order {
     private Long id;
     private String paymentLink;
     private String paymentId;
+    private String paymentIntentId;
     private String country;
     private String locality;
     private String region;

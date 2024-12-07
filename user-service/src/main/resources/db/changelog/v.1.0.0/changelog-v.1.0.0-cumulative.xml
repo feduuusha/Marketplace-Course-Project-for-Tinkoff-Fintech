@@ -31,6 +31,7 @@
     <include file="2024-11-07-create-order-table.xml" relativeToChangelogFile="true"/>
     <include file="2024-11-07-create-order-user-id-index.xml" relativeToChangelogFile="true"/>
     <include file="2024-11-07-create-order-payment-id-index.xml" relativeToChangelogFile="true"/>
+    <include file="2024-11-07-create-order-payment-intent-id-index.xml" relativeToChangelogFile="true"/>
     <include file="2024-11-07-create-order-item-seq.xml" relativeToChangelogFile="true"/>
     <include file="2024-11-07-create-order-item-table.xml" relativeToChangelogFile="true"/>
     <include file="2024-11-07-create-order-item-brand-id-index.xml" relativeToChangelogFile="true"/>

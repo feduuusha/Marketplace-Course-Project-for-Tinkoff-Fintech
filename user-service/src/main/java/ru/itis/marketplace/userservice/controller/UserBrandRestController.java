@@ -41,9 +41,9 @@ public class UserBrandRestController {
     }
 
     @DeleteMapping("/{userId:\\d+}/brands/{brandId:\\d+}")
-    public ResponseEntity<Void> deleteUserBrand(@PathVariable Long userId,
+    public ResponseEntity<Void> deleteUserBrand(@PathVariable(name = "userId") Long ignoredUserId,
                                                 @PathVariable Long brandId) {
-        userBrandService.deleteUserBrand(userId, brandId);
+        userBrandService.deleteUserBrand(brandId);
         return ResponseEntity.noContent().build();
     }
 

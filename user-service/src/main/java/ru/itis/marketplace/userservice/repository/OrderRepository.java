@@ -30,4 +30,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
             return predicates.stream().reduce(criteriaBuilder::and).orElse(null);
         };
     }
+
+    @Query("SELECT o FROM Order o INNER JOIN FETCH o.orderItems o_i where o_i.sizeId in :sizeIds")
+    List<Order> findOrderThatContainsSizeIds(List<Long> sizeIds);
 }

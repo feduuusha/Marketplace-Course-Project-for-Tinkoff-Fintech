@@ -20,8 +20,8 @@ public class ImageRestController {
     @PostMapping(value = "/{bucketName}")
     public String uploadImage(@NotNull @PathVariable String bucketName,
                               @NotNull @RequestBody MultipartFile file,
-                              @Positive @RequestParam Integer width,
-                              @Positive @RequestParam Integer height) {
+                              @Positive @RequestParam(required = false) Integer width,
+                              @Positive @RequestParam(required = false) Integer height) {
         return imageService.uploadImage(bucketName, file, width, height);
     }
 
