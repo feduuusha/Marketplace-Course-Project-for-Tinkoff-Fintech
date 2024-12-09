@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {ProductPhotoServiceImpl.class})
 @ActiveProfiles("test")
-public class ProductPhotoServiceTests {
+class ProductPhotoServiceTests {
 
     @Autowired
     private ProductPhotoServiceImpl productPhotoService;
@@ -45,7 +45,7 @@ public class ProductPhotoServiceTests {
 
     @Test
     @DisplayName("findProductPhotos should return list of product photos, because productId is correct")
-    public void findProductPhotosSuccessfulTest() {
+    void findProductPhotosSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         Product product = new Product("name", BigDecimal.valueOf(100), "desc", 1L, 1L);
@@ -68,7 +68,7 @@ public class ProductPhotoServiceTests {
 
     @Test
     @DisplayName("findProductPhotos should throw NotFoundException, because productId is incorrect")
-    public void findProductPhotosUnSuccessfulTest() {
+    void findProductPhotosUnSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
@@ -82,7 +82,7 @@ public class ProductPhotoServiceTests {
 
     @Test
     @DisplayName("deleteProductPhotosByIds should call productPhotoRepository.deleteAllByIdInBatch(productPhotosIds)")
-    public void deleteProductPhotosByIdsSuccessfulTest() {
+    void deleteProductPhotosByIdsSuccessfulTest() {
         // Arrange
         List<Long> productPhotosIds = List.of(1L, 2L, 3L, 4L, 5L);
 
@@ -95,7 +95,7 @@ public class ProductPhotoServiceTests {
 
     @Test
     @DisplayName("createProductPhoto should create productPhoto, because parameters is correct")
-    public void createProductPhotoSuccessfulTest() {
+    void createProductPhotoSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         String url = "url";
@@ -115,7 +115,7 @@ public class ProductPhotoServiceTests {
 
     @Test
     @DisplayName("createProductPhoto should throw NotFoundException, because productId is incorrect")
-    public void createProductPhotoUnSuccessfulIncorrectProductIdTest() {
+    void createProductPhotoUnSuccessfulIncorrectProductIdTest() {
         // Arrange
         Long productId = 1L;
         String url = "url";

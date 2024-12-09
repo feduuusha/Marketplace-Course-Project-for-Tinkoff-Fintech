@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {BrandLinkRestController.class})
 @Import(SecurityBeans.class)
 @ActiveProfiles("test")
-public class BrandLinkRestControllerTests {
+class BrandLinkRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,7 +39,7 @@ public class BrandLinkRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/{brandId}/links should return all brand links")
     @WithMockUser(roles={"SERVICE"})
-    public void findAllBrandLinksSuccessfulTest() throws Exception {
+    void findAllBrandLinksSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         ObjectMapper mapper = new ObjectMapper();
@@ -63,7 +63,7 @@ public class BrandLinkRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/{brandId}/links should return 401 because not auth-ed")
     @WithAnonymousUser
-    public void findAllBrandLinksUnSuccessfulTest() throws Exception {
+    void findAllBrandLinksUnSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
 
@@ -76,7 +76,7 @@ public class BrandLinkRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands/{brandId}/links should create brand link")
     @WithMockUser(roles={"SERVICE"})
-    public void createBrandLinkSuccessfulTest() throws Exception {
+    void createBrandLinkSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String url = "url";
@@ -101,7 +101,7 @@ public class BrandLinkRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands/{brandId}/links should return 400, because incorrect payload")
     @WithMockUser(roles={"SERVICE"})
-    public void createBrandLinkUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void createBrandLinkUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long brandId = 2L;
 
@@ -116,7 +116,7 @@ public class BrandLinkRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands/{brandId}/links should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void createBrandLinkUnSuccessfulNotAuthorizedTest() throws Exception {
+    void createBrandLinkUnSuccessfulNotAuthorizedTest() throws Exception {
         // Arrange
         Long brandId = 2L;
 
@@ -131,7 +131,7 @@ public class BrandLinkRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/brands/{brandId}/links/{linkIds} should delete link with specified ids")
     @WithMockUser(roles={"SERVICE"})
-    public void deleteAllBrandLinkByIdSuccessfulTest() throws Exception {
+    void deleteAllBrandLinkByIdSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         List<Long> linkIds = List.of(1L, 2L, 3L, 4L);
@@ -148,7 +148,7 @@ public class BrandLinkRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/brands/{brandId}/links/{linkIds} return 401, because not auth-ed")
     @WithAnonymousUser
-    public void deleteAllBrandLinkByIdUnSuccessfulNotAuthorizedTest() throws Exception {
+    void deleteAllBrandLinkByIdUnSuccessfulNotAuthorizedTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         List<Long> linkIds = List.of(1L, 2L, 3L, 4L);

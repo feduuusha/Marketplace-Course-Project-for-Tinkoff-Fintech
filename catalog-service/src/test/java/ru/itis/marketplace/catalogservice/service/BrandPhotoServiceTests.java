@@ -42,7 +42,7 @@ class BrandPhotoServiceTests {
 
     @Test
     @DisplayName("findBrandPhotos should return list of brand photos, because brandId is correct")
-    public void findBrandPhotosSuccessfulTest() {
+    void findBrandPhotosSuccessfulTest() {
         // Arrange
         Long brandId = 1L;
         Brand brand = new Brand("name", "desc", "link");
@@ -64,7 +64,7 @@ class BrandPhotoServiceTests {
 
     @Test
     @DisplayName("findBrandPhotos should throw NotFoundException, because brandId is incorrect")
-    public void findBrandPhotosUnSuccessfulTest() {
+    void findBrandPhotosUnSuccessfulTest() {
         // Arrange
         Long brandId = 1L;
         when(brandRepository.findById(brandId)).thenReturn(Optional.empty());
@@ -79,7 +79,7 @@ class BrandPhotoServiceTests {
 
     @Test
     @DisplayName("deleteAllBrandPhotosById should call brandLinkRepository.deleteAllByIdInBatch(brandPhotosIds)")
-    public void deleteAllBrandLinkByIdSuccessfulTest() {
+    void deleteAllBrandLinkByIdSuccessfulTest() {
         // Arrange
         List<Long> brandPhotosIds = List.of(1L, 2L, 3L, 4L, 5L);
 
@@ -92,7 +92,7 @@ class BrandPhotoServiceTests {
 
     @Test
     @DisplayName("createBrandPhoto should create brandPhoto, because parameters is correct")
-    public void createBrandPhotoSuccessfulTest() {
+    void createBrandPhotoSuccessfulTest() {
         // Arrange
         Long brandId = 1L;
         String url = "url";
@@ -112,7 +112,7 @@ class BrandPhotoServiceTests {
 
     @Test
     @DisplayName("createBrandPhoto should throw NotFoundException, because brandId is incorrect")
-    public void createBrandPhotoUnSuccessfulIncorrectBrandIdTest() {
+    void createBrandPhotoUnSuccessfulIncorrectBrandIdTest() {
         // Arrange
         Long brandId = 1L;
         String url = "url";

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {ProductSizeServiceImpl.class})
 @ActiveProfiles("test")
-public class ProductSizeServiceTests {
+class ProductSizeServiceTests {
 
     @Autowired
     private ProductSizeServiceImpl productSizeService;
@@ -47,7 +47,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("findAllProductSizes should return list of product sizes, because productId is correct")
-    public void findAllProductSizesSuccessfulTest() {
+    void findAllProductSizesSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         Product product = new Product();
@@ -68,7 +68,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("findAllProductSizes should throw NotFoundException, because productId is incorrect")
-    public void findAllProductSizesUnSuccessfulTest() {
+    void findAllProductSizesUnSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
@@ -82,7 +82,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("createProductSize should create productSize, because parameters is correct")
-    public void createProductSizeSuccessfulTest() {
+    void createProductSizeSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -103,7 +103,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("createProductSize should throw NotFoundException, because productId is incorrect")
-    public void createProductSizeUnSuccessfulIncorrectProductIdTest() {
+    void createProductSizeUnSuccessfulIncorrectProductIdTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -118,7 +118,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("createProductSize should throw BadRequestException, because product size with specified name and product id already exist")
-    public void createProductSizeUnSuccessfulAlreadyExistNameTest() {
+    void createProductSizeUnSuccessfulAlreadyExistNameTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -136,7 +136,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("deleteAllProductSizesById should call productSizeRepository.deleteAllByIdInBatch(sizeIds) and send message to kafka")
-    public void deleteAllProductSizesByIdSuccessfulTest() {
+    void deleteAllProductSizesByIdSuccessfulTest() {
         // Arrange
         List<Long> productSizeIds = List.of(1L, 2L, 3L, 4L, 5L);
 
@@ -150,7 +150,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("findSizeByIdAndProductId should return product size, because parameters is correct")
-    public void findSizeByIdAndProductIdSuccessfulTest() {
+    void findSizeByIdAndProductIdSuccessfulTest() {
         // Arrange
         Long productId = 2L;
         Long productSizeId = 4L;
@@ -167,7 +167,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("findSizeByIdAndProductId should throw NotFoundException, because product size is incorrect")
-    public void findSizeByIdAndProductIdUnSuccessfulProductSizeIsIncorrectTest() {
+    void findSizeByIdAndProductIdUnSuccessfulProductSizeIsIncorrectTest() {
         // Arrange
         Long productId = 2L;
         Long productSizeId = 4L;
@@ -183,7 +183,7 @@ public class ProductSizeServiceTests {
 
     @Test
     @DisplayName("findSizeByIdAndProductId should throw BadRequestException, because product size have different product id")
-    public void findSizeByIdAndProductIdUnSuccessfulDifferentProductIdTest() {
+    void findSizeByIdAndProductIdUnSuccessfulDifferentProductIdTest() {
         // Arrange
         Long productId = 2L;
         Long productSizeId = 4L;

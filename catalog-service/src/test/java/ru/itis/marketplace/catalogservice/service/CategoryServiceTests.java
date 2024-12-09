@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {CategoryServiceImpl.class})
 @ActiveProfiles("test")
-public class CategoryServiceTests {
+class CategoryServiceTests {
 
     @Autowired
     private CategoryService categoryService;
@@ -49,7 +49,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("findCategoryById should return category, because categoryId is correct")
-    public void findCategoryByIdSuccessfulTest() {
+    void findCategoryByIdSuccessfulTest() {
         // Arrange
         Long categoryId = 2L;
         String categoryName = "name";
@@ -65,7 +65,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("findCategoryById should throw NotFoundException, because categoryId is incorrect")
-    public void findCategoryByIdUnSuccessfulTest() {
+    void findCategoryByIdUnSuccessfulTest() {
         // Arrange
         Long categoryId = 2L;
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
@@ -79,7 +79,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("updateCategoryById should update category, because categoryId is correct")
-    public void updateCategoryByIdSuccessfulTest() {
+    void updateCategoryByIdSuccessfulTest() {
         // Arrange
         Long id = 2L;
         String name = "name";
@@ -98,7 +98,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("updateCategoryById should throw NotFoundException, because categoryId is incorrect")
-    public void updateCategoryByIdUnSuccessfulIncorrectCategoryIdTest() {
+    void updateCategoryByIdUnSuccessfulIncorrectCategoryIdTest() {
         // Arrange
         Long id = 2L;
         when(categoryRepository.findById(id)).thenReturn(Optional.empty());
@@ -112,7 +112,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("updateCategoryById should throw BadRequestException, because category with provided name already exist")
-    public void updateCategoryByIdUnSuccessfulAlreadyExistNameTest() {
+    void updateCategoryByIdUnSuccessfulAlreadyExistNameTest() {
         // Arrange
         Long id = 2L;
         String name = "name";
@@ -131,7 +131,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("updateCategoryById should do nothing, because provided name is same with stored")
-    public void updateCategoryByIdSuccessfulSameNameTest() {
+    void updateCategoryByIdSuccessfulSameNameTest() {
         // Arrange
         Long id = 2L;
         String name = "name";
@@ -149,7 +149,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("deleteCategoryById should delete category and send messages in kafka, because categoryId is correct")
-    public void deleteCategoryByIdSuccessfulTest() {
+    void deleteCategoryByIdSuccessfulTest() {
         // Arrange
         Long categoryId = 2L;
         List<Product> productList = List.of(
@@ -171,7 +171,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("createCategory should create category, because provided name is free")
-    public void createCategorySuccessfulTest() {
+    void createCategorySuccessfulTest() {
         // Arrange
         String name = "name";
         when(categoryRepository.findByName(name)).thenReturn(Optional.empty());
@@ -188,7 +188,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("createCategory should throw BadRequestException, because provided name is already exist")
-    public void createCategoryUnSuccessfulTest() {
+    void createCategoryUnSuccessfulTest() {
         // Arrange
         String name = "name";
         when(categoryRepository.findByName(name)).thenReturn(Optional.of(new Category(name)));
@@ -203,7 +203,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("findAllCategories should call categoryRepository.findAll")
-    public void findAllCategoriesSuccessfulTest() {
+    void findAllCategoriesSuccessfulTest() {
         // Arrange
         // Act
         categoryService.findAllCategories();
@@ -214,7 +214,7 @@ public class CategoryServiceTests {
 
     @Test
     @DisplayName("findCategoryByNameLike should call categoryRepository.findByNameLikeIgnoreCase")
-    public void findCategoryByNameLikeSuccessfulTest() {
+    void findCategoryByNameLikeSuccessfulTest() {
         // Arrange
         String name = "name";
         // Act

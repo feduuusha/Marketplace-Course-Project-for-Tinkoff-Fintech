@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("ALL")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {ProductServiceImpl.class})
 @ActiveProfiles("test")
-public class ProductServiceTests {
+class ProductServiceTests {
 
     @Autowired
     private ProductServiceImpl productService;
@@ -62,7 +62,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("findProductById should return product, because productId is correct")
-    public void findProductByIdSuccessfulTest() {
+    void findProductByIdSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         Product product = new Product();
@@ -77,7 +77,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("findProductById should throw NotFoundException, because productId is incorrect")
-    public void findProductByIdUnSuccessfulTest() {
+    void findProductByIdUnSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
@@ -91,7 +91,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductById should update product, because productId, categoryId, brandId is correct and name is free")
-    public void updateProductByIdSuccessfulTest() {
+    void updateProductByIdSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -125,7 +125,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductById should throw NotFoundException, because productId is incorrect")
-    public void updateProductByIdUnSuccessfulProductNotFoundTest() {
+    void updateProductByIdUnSuccessfulProductNotFoundTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -145,7 +145,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductById should throw BadRequestException, because categoryId is incorrect")
-    public void updateProductByIdUnSuccessfulCategoryNotFoundTest() {
+    void updateProductByIdUnSuccessfulCategoryNotFoundTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -167,7 +167,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductById should throw BadRequestException, because brandId is incorrect")
-    public void updateProductByIdUnSuccessfulBrandNotFoundTest() {
+    void updateProductByIdUnSuccessfulBrandNotFoundTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -191,7 +191,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductById should update product, because productId, categoryId, brandId is correct and name is same")
-    public void updateProductByIdSuccessfulSameNameTest() {
+    void updateProductByIdSuccessfulSameNameTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -225,7 +225,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductById should throw BadRequestException, because provided name already exist")
-    public void updateProductByIdUnSuccessfulTest() {
+    void updateProductByIdUnSuccessfulTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -252,7 +252,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductById should update product and dont send message in kafka, because productId, categoryId, brandId is correct and name is same and brandId is same")
-    public void updateProductByIdSuccessfulSameBrandTest() {
+    void updateProductByIdSuccessfulSameBrandTest() {
         // Arrange
         Long productId = 1L;
         String name = "name";
@@ -286,7 +286,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("deleteProductById should call productRepository.deleteById(id) and send message to kafka")
-    public void deleteAllProductSizesByIdSuccessfulTest() {
+    void deleteAllProductSizesByIdSuccessfulTest() {
         // Arrange
         Long productId = 2L;
         List<ProductSize> productSizes = List.of(
@@ -306,7 +306,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("findAllProducts should call productRepository.findAll with pageable, sort and direction, because page, size, sort and direction provided")
-    public void findAllProductsSuccessfulWithAllTest() {
+    void findAllProductsSuccessfulWithAllTest() {
         // Arrange
         int page = 1;
         int pageSize = 2;
@@ -327,7 +327,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("findAllProducts should call productRepository.findAll with out anything, because nothing provided")
-    public void findAllProductsSuccessfulWithOutAnythingTest() {
+    void findAllProductsSuccessfulWithOutAnythingTest() {
         // Arrange
         Pageable pageable = Pageable.unpaged(Sort.unsorted());
         when(productRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(Page.empty());
@@ -342,7 +342,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("createProduct should save product, because provided name is free and brandId categoryId are correct")
-    public void createProductSuccessfulTest() {
+    void createProductSuccessfulTest() {
         // Arrange
         String name = "name";
         BigDecimal price = BigDecimal.valueOf(100);
@@ -366,7 +366,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("createProduct should throw BadRequestException, because provided categoryId is incorrect")
-    public void createProductUnSuccessfulCategoryIdNotFoundTest() {
+    void createProductUnSuccessfulCategoryIdNotFoundTest() {
         // Arrange
         String name = "name";
         BigDecimal price = BigDecimal.valueOf(100);
@@ -384,7 +384,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("createProduct should throw BadRequestException, because provided brandId is incorrect")
-    public void createProductUnSuccessfulBrandIdNotFoundTest() {
+    void createProductUnSuccessfulBrandIdNotFoundTest() {
         // Arrange
         String name = "name";
         BigDecimal price = BigDecimal.valueOf(100);
@@ -403,7 +403,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("createProduct should throw BadRequestException, because provided name is already exist")
-    public void createProductUnSuccessfulNameAlreadyExistTest() {
+    void createProductUnSuccessfulNameAlreadyExistTest() {
         // Arrange
         String name = "name";
         BigDecimal price = BigDecimal.valueOf(100);
@@ -423,7 +423,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("findProductsByIds should call productRepository.findAllById")
-    public void findProductsByIdsSuccessfulTest() {
+    void findProductsByIdsSuccessfulTest() {
         // Arrange
         List<Long> ids = List.of(1L, 2L, 3L);
         // Act
@@ -435,7 +435,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("findProductsByNameLike should call productRepository.findByNameLikeIgnoreCase")
-    public void findProductsByNameLikeSuccessfulTest() {
+    void findProductsByNameLikeSuccessfulTest() {
         // Arrange
         String name = "name";
         List<Product> products = List.of(
@@ -457,7 +457,7 @@ public class ProductServiceTests {
 
     @Test
     @DisplayName("updateProductStatusById should call productRepository.findByNameLikeIgnoreCase")
-    public void updateProductStatusByIdSuccessfulTest() {
+    void updateProductStatusByIdSuccessfulTest() {
         // Arrange
         Long productId = 2L;
         String requestStatus = "status";

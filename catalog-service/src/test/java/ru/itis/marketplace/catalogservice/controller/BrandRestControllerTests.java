@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {BrandRestController.class})
 @Import(SecurityBeans.class)
 @ActiveProfiles("test")
-public class BrandRestControllerTests {
+class BrandRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,7 +43,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/{brandId} should return brand")
     @WithMockUser(roles={"SERVICE"})
-    public void findBrandByIdSuccessfulTest() throws Exception {
+    void findBrandByIdSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         ObjectMapper mapper = new ObjectMapper();
@@ -63,7 +63,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/{brandId}/links should return 401 because not auth-ed")
     @WithAnonymousUser
-    public void findAllBrandLinksUnSuccessfulTest() throws Exception {
+    void findAllBrandLinksUnSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
 
@@ -76,7 +76,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/brands/{brandId} should update brand")
     @WithMockUser(roles={"SERVICE"})
-    public void updateBrandByIdSuccessfulTest() throws Exception {
+    void updateBrandByIdSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String name = "name";
@@ -100,7 +100,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/brands/{brandId} should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void updateBrandByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void updateBrandByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String name = "   ";
@@ -121,7 +121,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/brands/{brandId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void updateBrandByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void updateBrandByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String name = null;
@@ -142,7 +142,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: PATCH Endpoint: api/v1/catalog/brands/{brandId} should little bit update brand")
     @WithMockUser(roles={"SERVICE"})
-    public void updateBrandStatusByIdSuccessfulTest() throws Exception {
+    void updateBrandStatusByIdSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String requestStatus = "status";
@@ -163,7 +163,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: PATCH Endpoint: api/v1/catalog/brands/{brandId} should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void updateBrandStatusByIdUnSuccessfulPayloadIncorrectTest() throws Exception {
+    void updateBrandStatusByIdUnSuccessfulPayloadIncorrectTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String requestStatus = "   ";
@@ -181,7 +181,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/brands/{brandId} should delete brand")
     @WithMockUser(roles = {"SERVICE"})
-    public void deleteBrandByIdSuccessfulTest() throws Exception {
+    void deleteBrandByIdSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
 
@@ -196,7 +196,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/brands/{brandId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void deleteBrandByIdUnSuccessfulTest() throws Exception {
+    void deleteBrandByIdUnSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
 
@@ -210,7 +210,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands should return all brands, because no parameters is provided")
     @WithMockUser(roles = {"SERVICE"})
-    public void findBrandsSuccessfulTest() throws Exception {
+    void findBrandsSuccessfulTest() throws Exception {
         // Arrange
         List<Brand> brands = List.of(
                 new Brand(1L, "name" , "description", "link", null, null, null),
@@ -234,7 +234,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands should return not all brands, because all parameters are provided")
     @WithMockUser(roles = {"SERVICE"})
-    public void findBrandsSuccessfulAllParametersTest() throws Exception {
+    void findBrandsSuccessfulAllParametersTest() throws Exception {
         // Arrange
         String status = "status";
         Integer pageSize = 2;
@@ -262,7 +262,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findBrandsUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void findBrandsUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         // Act
         // Assert
@@ -274,7 +274,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands should create brand, because all ok")
     @WithMockUser(roles = {"SERVICE"})
-    public void createBrandSuccessfulTest() throws Exception {
+    void createBrandSuccessfulTest() throws Exception {
         // Arrange
         String name = "name";
         String description = "description";
@@ -299,7 +299,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands should return 400, because parameter is incorrect")
     @WithMockUser(roles = {"SERVICE"})
-    public void createBrandUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void createBrandUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         String name = "   ";
         String description = "description";
@@ -317,7 +317,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void createBrandUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void createBrandUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         String name = "   ";
         String description = "description";
@@ -335,7 +335,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/by-ids/{brandIds} should return brands by ids")
     @WithMockUser(roles = {"SERVICE"})
-    public void findAllBrandByIdsSuccessfulTest() throws Exception {
+    void findAllBrandByIdsSuccessfulTest() throws Exception {
         // Arrange
         List<Long> brandIds = List.of(1L, 2L, 3L, 4L);
         List<Brand> brands = List.of(
@@ -360,7 +360,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/by-ids/{brandIds} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findAllBrandByIdsUnSuccessfulTest() throws Exception {
+    void findAllBrandByIdsUnSuccessfulTest() throws Exception {
         // Arrange
         List<Long> brandIds = List.of(1L, 2L, 3L, 4L);
 
@@ -374,7 +374,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/search should return brands by name")
     @WithMockUser(roles = {"SERVICE"})
-    public void findBrandsByNameLikeSuccessfulTest() throws Exception {
+    void findBrandsByNameLikeSuccessfulTest() throws Exception {
         // Arrange
         String name = "name";
         List<Brand> brands = List.of(
@@ -398,7 +398,7 @@ public class BrandRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/search should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findBrandsByNameLikeUnSuccessfulTest() throws Exception {
+    void findBrandsByNameLikeUnSuccessfulTest() throws Exception {
         // Arrange
         String name = "name";
 

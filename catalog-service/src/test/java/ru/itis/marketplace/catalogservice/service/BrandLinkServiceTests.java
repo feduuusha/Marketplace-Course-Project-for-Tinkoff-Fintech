@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {BrandLinkServiceImpl.class})
 @ActiveProfiles("test")
-public class BrandLinkServiceTests {
+class BrandLinkServiceTests {
 
     @Autowired
     private BrandLinkService brandLinkService;
@@ -44,7 +44,7 @@ public class BrandLinkServiceTests {
 
     @Test
     @DisplayName("findAllBrandLinks should return list of brand links, because brandId is correct")
-    public void findAllBrandLinksSuccessfulTest() {
+    void findAllBrandLinksSuccessfulTest() {
         // Arrange
         Long brandId = 1L;
         Brand brand = new Brand("name", "desc", "link");
@@ -61,7 +61,7 @@ public class BrandLinkServiceTests {
 
     @Test
     @DisplayName("findAllBrandLinks should throw NotFoundException, because brandId is incorrect")
-    public void findAllBrandLinksUnSuccessfulTest() {
+    void findAllBrandLinksUnSuccessfulTest() {
         // Arrange
         Long brandId = 1L;
         when(brandRepository.findById(brandId)).thenReturn(Optional.empty());
@@ -75,7 +75,7 @@ public class BrandLinkServiceTests {
 
     @Test
     @DisplayName("createBrandLink should create brandLink, because parameters is correct")
-    public void createBrandLinkSuccessfulTest() {
+    void createBrandLinkSuccessfulTest() {
         // Arrange
         Long brandId = 1L;
         String url = "url";
@@ -97,7 +97,7 @@ public class BrandLinkServiceTests {
 
     @Test
     @DisplayName("createBrandLink should throw NotFoundException, because brandId is incorrect")
-    public void createBrandLinkUnSuccessfulIncorrectBrandIdTest() {
+    void createBrandLinkUnSuccessfulIncorrectBrandIdTest() {
         // Arrange
         Long brandId = 1L;
         String url = "url";
@@ -113,7 +113,7 @@ public class BrandLinkServiceTests {
 
     @Test
     @DisplayName("createBrandLink should throw BadRequestException, because brand link with specified name already exist")
-    public void createBrandLinkUnSuccessfulAlreadyExistNameTest() {
+    void createBrandLinkUnSuccessfulAlreadyExistNameTest() {
         // Arrange
         Long brandId = 1L;
         String url = "url";
@@ -132,7 +132,7 @@ public class BrandLinkServiceTests {
 
     @Test
     @DisplayName("deleteAllBrandLinkById should call brandLinkRepository.deleteAllByIdInBatch(linkIds)")
-    public void deleteAllBrandLinkByIdSuccessfulTest() {
+    void deleteAllBrandLinkByIdSuccessfulTest() {
         // Arrange
         List<Long> brandLinkIds = List.of(1L, 2L, 3L, 4L, 5L);
 

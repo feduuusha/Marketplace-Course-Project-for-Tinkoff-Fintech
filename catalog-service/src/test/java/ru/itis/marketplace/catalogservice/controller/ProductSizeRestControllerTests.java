@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {ProductSizeRestController.class})
 @Import(SecurityBeans.class)
 @ActiveProfiles("test")
-public class ProductSizeRestControllerTests {
+class ProductSizeRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,7 +40,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId}/sizes should return product sizes")
     @WithMockUser(roles={"SERVICE"})
-    public void findAllProductSizesSuccessfulTest() throws Exception {
+    void findAllProductSizesSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         ObjectMapper mapper = new ObjectMapper();
@@ -64,7 +64,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId}/sizes should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findAllProductSizesUnSuccessfulTest() throws Exception {
+    void findAllProductSizesUnSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
 
@@ -77,7 +77,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products/{productId}/sizes should create product size")
     @WithMockUser(roles={"SERVICE"})
-    public void createProductSizeSuccessfulTest() throws Exception {
+    void createProductSizeSuccessfulTest() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         Long productId = 2L;
@@ -100,7 +100,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products/{productId}/sizes should return 400, because incorrect payload")
     @WithMockUser(roles={"SERVICE"})
-    public void createProductSizeUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void createProductSizeUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         Long productId = 2L;
@@ -119,7 +119,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products/{productId}/sizes should return 401, because not auuth-ed")
     @WithAnonymousUser
-    public void createProductSizeUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void createProductSizeUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         Long productId = 2L;
@@ -138,7 +138,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/products/{productId}/sizes/{sizeIds} should delete product sizes")
     @WithMockUser(roles={"SERVICE"})
-    public void deleteAllProductSizesByIdSuccessfulTest() throws Exception {
+    void deleteAllProductSizesByIdSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         List<Long> sizeIds = List.of(1L, 2L, 3L, 4L);
@@ -154,7 +154,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/products/{productId}/sizes/{sizeIds} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void deleteAllProductSizesByIdUnSuccessfulTest() throws Exception {
+    void deleteAllProductSizesByIdUnSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         List<Long> sizeIds = List.of(1L, 2L, 3L, 4L);
@@ -169,7 +169,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId}/sizes/{sizeId} should check what productSize.getProductId() == productId")
     @WithMockUser(roles={"SERVICE"})
-    public void findSizeByIdAndProductIdSuccessfulTest() throws Exception {
+    void findSizeByIdAndProductIdSuccessfulTest() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         Long productId = 2L;
@@ -191,7 +191,7 @@ public class ProductSizeRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId}/sizes/{sizeId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findSizeByIdAndProductIdUnSuccessfulTest() throws Exception {
+    void findSizeByIdAndProductIdUnSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         Long sizeId = 3L;

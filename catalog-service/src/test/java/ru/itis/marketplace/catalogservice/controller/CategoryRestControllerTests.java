@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {CategoryRestController.class})
 @Import(SecurityBeans.class)
 @ActiveProfiles("test")
-public class CategoryRestControllerTests {
+class CategoryRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,7 +42,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/categories/{categoryId} should return category")
     @WithMockUser(roles={"SERVICE"})
-    public void findCategoryByIdSuccessfulTest() throws Exception {
+    void findCategoryByIdSuccessfulTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
         ObjectMapper mapper = new ObjectMapper();
@@ -62,7 +62,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/categories/{categoryId} should return 401, because not auth-ed")
     @WithAnonymousUser()
-    public void findCategoryByIdUnSuccessfulTest() throws Exception {
+    void findCategoryByIdUnSuccessfulTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
 
@@ -75,7 +75,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/categories/{categoryId} should update category")
     @WithMockUser(roles={"SERVICE"})
-    public void updateCategoryByIdSuccessfulTest() throws Exception {
+    void updateCategoryByIdSuccessfulTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
         String name = "name";
@@ -93,7 +93,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/categories/{categoryId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void updateCategoryByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void updateCategoryByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
         String name = "name";
@@ -110,7 +110,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/categories/{categoryId} should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void updateCategoryByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void updateCategoryByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
         String name = "    ";
@@ -127,7 +127,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/categories/{categoryId} should delete category")
     @WithMockUser(roles={"SERVICE"})
-    public void deleteCategoryByIdSuccessfulTest() throws Exception {
+    void deleteCategoryByIdSuccessfulTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
 
@@ -141,7 +141,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/categories/{categoryId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void deleteCategoryByIdUnSuccessfulTest() throws Exception {
+    void deleteCategoryByIdUnSuccessfulTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
 
@@ -154,7 +154,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/categories should create category")
     @WithMockUser(roles={"SERVICE"})
-    public void createCategorySuccessfulTest() throws Exception {
+    void createCategorySuccessfulTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
         String name = "name";
@@ -178,7 +178,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/categories should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void createCategoryUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void createCategoryUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
         String name = "   ";
@@ -195,7 +195,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/categories should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void createCategoryUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void createCategoryUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long categoryId = 2L;
         String name = "   ";
@@ -212,7 +212,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/categories should all categories")
     @WithMockUser(roles = {"SERVICE"})
-    public void findCategoriesSuccessfulTest() throws Exception {
+    void findCategoriesSuccessfulTest() throws Exception {
         // Arrange
         List<Category> categories = List.of(
                 new Category(1L, "name1"),
@@ -235,7 +235,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/categories should return 401,because not auth-ed")
     @WithAnonymousUser
-    public void findCategoriesUnSuccessfulTest() throws Exception {
+    void findCategoriesUnSuccessfulTest() throws Exception {
         // Arrange
         // Act
         // Assert
@@ -246,7 +246,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/categories/search should return categories by name")
     @WithMockUser(roles = {"SERVICE"})
-    public void findCategoriesByNameLikeSuccessfulTest() throws Exception {
+    void findCategoriesByNameLikeSuccessfulTest() throws Exception {
         // Arrange
         List<Category> categories = List.of(
                 new Category(1L, "name"),
@@ -270,7 +270,7 @@ public class CategoryRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/categories/search should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findCategoriesByNameLikeUnSuccessfulTest() throws Exception {
+    void findCategoriesByNameLikeUnSuccessfulTest() throws Exception {
         // Arrange
         String name = "name";
 

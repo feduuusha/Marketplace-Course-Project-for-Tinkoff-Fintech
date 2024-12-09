@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {BrandPhotoRestController.class})
 @Import(SecurityBeans.class)
 @ActiveProfiles("test")
-public class BrandPhotoRestControllerTests {
+class BrandPhotoRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,7 +41,7 @@ public class BrandPhotoRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/{brandId}/photos should return brand photos")
     @WithMockUser(roles={"SERVICE"})
-    public void findBrandPhotosSuccessfulTest() throws Exception {
+    void findBrandPhotosSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         ObjectMapper mapper = new ObjectMapper();
@@ -65,7 +65,7 @@ public class BrandPhotoRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/brands/{brandId}/photos should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findAllBrandLinksUnSuccessfulTest() throws Exception {
+    void findAllBrandLinksUnSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
 
@@ -78,7 +78,7 @@ public class BrandPhotoRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/brands/{brandId}/photos/{photoIds} should delete photo with specified ids")
     @WithMockUser(roles={"SERVICE"})
-    public void deleteAllBrandPhotosByIdSuccessfulTest() throws Exception {
+    void deleteAllBrandPhotosByIdSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         List<Long> photoIds = List.of(1L, 2L, 3L, 4L);
@@ -95,7 +95,7 @@ public class BrandPhotoRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/brands/{brandId}/photos/{photoIds} should return 401, because not auth-ed")
     @WithAnonymousUser()
-    public void deleteAllBrandPhotosByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void deleteAllBrandPhotosByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         List<Long> photoIds = List.of(1L, 2L, 3L, 4L);
@@ -111,7 +111,7 @@ public class BrandPhotoRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands/{brandId}/photos should create brand photo")
     @WithMockUser(roles={"SERVICE"})
-    public void createBrandPhotoSuccessfulTest() throws Exception {
+    void createBrandPhotoSuccessfulTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String url = "url";
@@ -136,7 +136,7 @@ public class BrandPhotoRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands/{brandId}/photos should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void createBrandPhotoUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void createBrandPhotoUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String url = null;
@@ -154,7 +154,7 @@ public class BrandPhotoRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/brands/{brandId}/photos should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void createBrandPhotoUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void createBrandPhotoUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long brandId = 2L;
         String url = "url";

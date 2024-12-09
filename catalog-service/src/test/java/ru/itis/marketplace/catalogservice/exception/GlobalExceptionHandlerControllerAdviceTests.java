@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ProductRestController.class)
 @ActiveProfiles("test")
 @Import({SecurityBeans.class, GlobalExceptionHandlerControllerAdvice.class})
-public class GlobalExceptionHandlerControllerAdviceTests {
+class GlobalExceptionHandlerControllerAdviceTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,7 +34,7 @@ public class GlobalExceptionHandlerControllerAdviceTests {
     @Test
     @DisplayName("api/v1/catalog/products/{productId} should throw NotFoundException and exception handler should return 404")
     @WithMockUser(roles = {"SERVICE"})
-    public void handleNotFoundExceptionTest() throws Exception {
+    void handleNotFoundExceptionTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String message = "message";
@@ -60,7 +60,7 @@ public class GlobalExceptionHandlerControllerAdviceTests {
     @Test
     @DisplayName("api/v1/catalog/products/{productId} should throw BadRequestException and exception handler should return 400")
     @WithMockUser(roles = {"SERVICE"})
-    public void handleBadRequestExceptionTest() throws Exception {
+    void handleBadRequestExceptionTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String message = "message";
@@ -86,7 +86,7 @@ public class GlobalExceptionHandlerControllerAdviceTests {
     @Test
     @DisplayName("api/v1/catalog/products/{productId} should throw IllegalStateException and exception handler should return 500")
     @WithMockUser(roles = {"SERVICE"})
-    public void handleIllegalStateExceptionTest() throws Exception {
+    void handleIllegalStateExceptionTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String message = "message";

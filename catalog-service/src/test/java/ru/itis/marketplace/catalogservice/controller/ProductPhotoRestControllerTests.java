@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {ProductPhotoRestController.class})
 @Import(SecurityBeans.class)
 @ActiveProfiles("test")
-public class ProductPhotoRestControllerTests {
+class ProductPhotoRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,7 +41,7 @@ public class ProductPhotoRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId}/photos should return product photos")
     @WithMockUser(roles={"SERVICE"})
-    public void findProductPhotosSuccessfulTest() throws Exception {
+    void findProductPhotosSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         ObjectMapper mapper = new ObjectMapper();
@@ -64,7 +64,7 @@ public class ProductPhotoRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId}/photos should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findProductPhotosUnSuccessfulTest() throws Exception {
+    void findProductPhotosUnSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
 
@@ -77,7 +77,7 @@ public class ProductPhotoRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/products/{productId}/photos/{photoIds} should delete product photos by specified ids")
     @WithMockUser(roles={"SERVICE"})
-    public void deleteProductPhotosByIdsSuccessfulTest() throws Exception {
+    void deleteProductPhotosByIdsSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         List<Long> photoIds = List.of(1L, 2L, 3L);
@@ -94,7 +94,7 @@ public class ProductPhotoRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/products/{productId}/photos/{photoIds} should delete product 401, because not auth-ed")
     @WithAnonymousUser
-    public void deleteProductPhotosByIdsUnSuccessfulTest() throws Exception {
+    void deleteProductPhotosByIdsUnSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         List<Long> photoIds = List.of(1L, 2L, 3L);
@@ -109,7 +109,7 @@ public class ProductPhotoRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products/{productId}/photos should create product photo")
     @WithMockUser(roles={"SERVICE"})
-    public void createProductPhotoSuccessfulTest() throws Exception {
+    void createProductPhotoSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String url = "url";
@@ -135,7 +135,7 @@ public class ProductPhotoRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products/{productId}/photos should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void createProductPhotoUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void createProductPhotoUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String url = "url";
@@ -154,7 +154,7 @@ public class ProductPhotoRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products/{productId}/photos should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void createProductPhotoUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void createProductPhotoUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String url = "url";

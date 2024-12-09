@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {ProductRestController.class})
 @Import(SecurityBeans.class)
 @ActiveProfiles("test")
-public class ProductRestControllerTests {
+class ProductRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,7 +44,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId} should return product")
     @WithMockUser(roles={"SERVICE"})
-    public void findProductByIdSuccessfulTest() throws Exception {
+    void findProductByIdSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         ObjectMapper mapper = new ObjectMapper();
@@ -64,7 +64,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/{productId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findProductByIdUnSuccessfulTest() throws Exception {
+    void findProductByIdUnSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
 
@@ -77,7 +77,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/products/{productId} should update product")
     @WithMockUser(roles={"SERVICE"})
-    public void updateProductByIdSuccessfulTest() throws Exception {
+    void updateProductByIdSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String name = "name";
@@ -100,7 +100,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/products/{productId} should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void updateProductByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void updateProductByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String name = "name";
@@ -122,7 +122,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: PUT Endpoint: api/v1/catalog/products/{productId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void updateProductByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void updateProductByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String name = "name";
@@ -144,7 +144,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: PATCH Endpoint: api/v1/catalog/products/{productId} should update product status")
     @WithMockUser(roles={"SERVICE"})
-    public void updateProductStatusByIdSuccessfulTest() throws Exception {
+    void updateProductStatusByIdSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String status = "status";
@@ -162,7 +162,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: PATCH Endpoint: api/v1/catalog/products/{productId} should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void updateProductStatusByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void updateProductStatusByIdUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String status = "   ";
@@ -179,7 +179,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: PATCH Endpoint: api/v1/catalog/products/{productId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void updateProductStatusByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void updateProductStatusByIdUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         Long productId = 2L;
         String status = "status";
@@ -196,7 +196,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/products/{productId} should delete product")
     @WithMockUser(roles={"SERVICE"})
-    public void deleteProductByIdSuccessfulTest() throws Exception {
+    void deleteProductByIdSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
 
@@ -210,7 +210,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: DELETE Endpoint: api/v1/catalog/products/{productId} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void deleteProductByIdUnSuccessfulTest() throws Exception {
+    void deleteProductByIdUnSuccessfulTest() throws Exception {
         // Arrange
         Long productId = 2L;
 
@@ -223,7 +223,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products should return all products")
     @WithMockUser(roles={"SERVICE"})
-    public void findAllProductsSuccessfulTest() throws Exception {
+    void findAllProductsSuccessfulTest() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         List<Product> products = List.of(
@@ -247,7 +247,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findAllProductsUnSuccessfulTest() throws Exception {
+    void findAllProductsUnSuccessfulTest() throws Exception {
         // Arrange
         // Act
         // Assert
@@ -258,7 +258,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products should return not all products, because all parameters is provided")
     @WithMockUser(roles={"SERVICE"})
-    public void findAllProductsSuccessfulAllParametersTest() throws Exception {
+    void findAllProductsSuccessfulAllParametersTest() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         List<Product> products = List.of(
@@ -295,7 +295,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/by-ids/{productIds} should products with specified ids")
     @WithMockUser(roles={"SERVICE"})
-    public void findProductsByIdsSuccessfulTest() throws Exception {
+    void findProductsByIdsSuccessfulTest() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         List<Long> productIds = List.of(1L, 2L, 3L);
@@ -320,7 +320,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/by-ids/{productIds} should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findProductsByIdsUnSuccessfulTest() throws Exception {
+    void findProductsByIdsUnSuccessfulTest() throws Exception {
         // Arrange
         List<Long> productIds = List.of(1L, 2L, 3L);
 
@@ -334,7 +334,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products should create product")
     @WithMockUser(roles={"SERVICE"})
-    public void createCategorySuccessfulTest() throws Exception {
+    void createCategorySuccessfulTest() throws Exception {
         // Arrange
         String name = "name";
         BigDecimal price = BigDecimal.valueOf(100);
@@ -362,7 +362,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products should return 400, because payload is incorrect")
     @WithMockUser(roles={"SERVICE"})
-    public void createCategoryUnSuccessfulIncorrectPayloadTest() throws Exception {
+    void createCategoryUnSuccessfulIncorrectPayloadTest() throws Exception {
         // Arrange
         String name = "name";
         BigDecimal price = BigDecimal.valueOf(-100);
@@ -382,7 +382,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: POST Endpoint: api/v1/catalog/products should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void createCategoryUnSuccessfulNotAuthenticatedTest() throws Exception {
+    void createCategoryUnSuccessfulNotAuthenticatedTest() throws Exception {
         // Arrange
         String name = "name";
         BigDecimal price = BigDecimal.valueOf(-100);
@@ -402,7 +402,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/search should return products by name")
     @WithMockUser(roles = {"SERVICE"})
-    public void findProductsByNameLikeSuccessfulTest() throws Exception {
+    void findProductsByNameLikeSuccessfulTest() throws Exception {
         // Arrange
         List<Product> products = List.of(
                 new Product(1L, "name", null, null, null, null, null, null, null, null, null),
@@ -426,7 +426,7 @@ public class ProductRestControllerTests {
     @Test
     @DisplayName("Method: GET Endpoint: api/v1/catalog/products/search should return 401, because not auth-ed")
     @WithAnonymousUser
-    public void findProductsByNameLikeUnSuccessfulTest() throws Exception {
+    void findProductsByNameLikeUnSuccessfulTest() throws Exception {
         // Arrange
         String name = "name";
 

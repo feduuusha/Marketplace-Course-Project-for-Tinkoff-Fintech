@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("ALL")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {BrandServiceImpl.class})
 @ActiveProfiles("test")
-public class BrandServiceTests {
+class BrandServiceTests {
 
     @Autowired
     private BrandService brandService;
@@ -53,7 +53,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findBrandById should return brand, because brandId is correct")
-    public void findBrandByIdSuccessfulTest() {
+    void findBrandByIdSuccessfulTest() {
         // Arrange
         Long brandId = 2L;
         Brand brand = new Brand("name", "desc", "link");
@@ -68,7 +68,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findBrandById should throw NotFoundException, because brandId is incorrect")
-    public void findBrandByIdUnSuccessfulTest() {
+    void findBrandByIdUnSuccessfulTest() {
         // Arrange
         Long brandId = 2L;
         when(brandRepository.findById(brandId)).thenReturn(Optional.empty());
@@ -82,7 +82,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("updateBrandById should update brand, because brandId is correct")
-    public void updateBrandByIdSuccessfulTest() {
+    void updateBrandByIdSuccessfulTest() {
         // Arrange
         Long brandId = 2L;
         String name = "name";
@@ -102,7 +102,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("updateBrandById should throw BadRequestException, because brand with specified name already exist")
-    public void updateBrandByIdUnSuccessfulTest() {
+    void updateBrandByIdUnSuccessfulTest() {
         // Arrange
         Long brandId = 2L;
         String name = "name";
@@ -122,7 +122,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("updateBrandById should update brand, because brandId is correct and name is same")
-    public void updateBrandByIdSuccessfulSameNameTest() {
+    void updateBrandByIdSuccessfulSameNameTest() {
         // Arrange
         Long brandId = 2L;
         String name = "name";
@@ -141,7 +141,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("deleteBrandById should delete brand and send messages in kafka, because brandId is correct")
-    public void deleteBrandByIdSuccessfulTest() {
+    void deleteBrandByIdSuccessfulTest() {
         // Arrange
         Long brandId = 2L;
         List<Product> productList = List.of(
@@ -164,7 +164,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findAllProducts should call productRepository.findAll with pageable and sort, because page and size provided")
-    public void findAllBrandsSuccessfulPageableTest() {
+    void findAllBrandsSuccessfulPageableTest() {
         // Arrange
         int page = 1;
         int pageSize = 2;
@@ -180,7 +180,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findAllBrands should call brandRepository.findAll with pageable and sorting, because page and size and sort provided")
-    public void findAllBrandsSuccessfulPageableAndSortableTest() {
+    void findAllBrandsSuccessfulPageableAndSortableTest() {
         // Arrange
         int page = 1;
         int pageSize = 2;
@@ -197,7 +197,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findAllBrands should call brandRepository.findAll with sorting, because sort provided")
-    public void findAllBrandsSuccessfulSortableTest() {
+    void findAllBrandsSuccessfulSortableTest() {
         // Arrange
         String sort = "name";
         Pageable pageable = Pageable.unpaged(Sort.by(sort));
@@ -212,7 +212,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findAllBrands should call brandRepository.findAll with out anything, because all parameters null")
-    public void findAllBrandsSuccessfulTest() {
+    void findAllBrandsSuccessfulTest() {
         // Arrange
         Pageable pageable = Pageable.unpaged(Sort.unsorted());
         when(brandRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(Page.empty());
@@ -226,7 +226,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("createBrand should save brand, because provided name is free")
-    public void createBrandSuccessfulTest() {
+    void createBrandSuccessfulTest() {
         // Arrange
         String name = "name";
         String description = "description";
@@ -246,7 +246,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("createBrand should throw BadRequestException, because provided name is not already exist")
-    public void createBrandUnSuccessfulTest() {
+    void createBrandUnSuccessfulTest() {
         // Arrange
         String name = "name";
         String description = "description";
@@ -263,7 +263,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findAllBrandByIds should call brandRepository.findAllById")
-    public void findAllBrandByIdsSuccessfulTest() {
+    void findAllBrandByIdsSuccessfulTest() {
         // Arrange
         List<Long> ids = List.of(1L, 2L, 3L);
 
@@ -276,7 +276,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("findBrandsByNameLike should call brandRepository.findByNameLikeIgnoreCase")
-    public void findBrandsByNameLikeSuccessfulTest() {
+    void findBrandsByNameLikeSuccessfulTest() {
         // Arrange
         String name = "name";
         when(brandRepository.findByNameLikeIgnoreCase(name)).thenReturn(List.of());
@@ -290,7 +290,7 @@ public class BrandServiceTests {
 
     @Test
     @DisplayName("updateBrandStatusById should set Request Status and save to brandRepository")
-    public void updateBrandStatusByIdSuccessfulTest() {
+    void updateBrandStatusByIdSuccessfulTest() {
         // Arrange
         Long brandId = 2L;
         String requestStatus = "status";
