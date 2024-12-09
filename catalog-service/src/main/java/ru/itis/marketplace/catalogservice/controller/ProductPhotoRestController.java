@@ -26,9 +26,9 @@ public class ProductPhotoRestController {
     }
 
     @DeleteMapping("/{productId:\\d+}/photos/{photoIds}")
-    public ResponseEntity<Void> deleteProductPhotosByIds(@PathVariable Long productId,
+    public ResponseEntity<Void> deleteProductPhotosByIds(@PathVariable(name = "productId") Long ignoredProductId,
                                                          @PathVariable List<Long> photoIds) {
-        productPhotoService.deleteProductPhotosByIds(productId, photoIds);
+        productPhotoService.deleteProductPhotosByIds(photoIds);
         return ResponseEntity.noContent().build();
     }
 

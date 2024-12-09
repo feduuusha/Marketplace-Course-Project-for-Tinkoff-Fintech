@@ -62,4 +62,18 @@ public class Product {
     public final int hashCode() {
         return this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "name = " + name + ", " +
+                "price = " + price + ", " +
+                "description = " + description + ", " +
+                "requestStatus = " + requestStatus + ", " +
+                "categoryId = " + categoryId + ", " +
+                "brandId = " + brandId + ", " +
+                "additionDateTime = " + additionDateTime + ", " +
+                "updateDateTime = " + updateDateTime + ")";
+    }
 }

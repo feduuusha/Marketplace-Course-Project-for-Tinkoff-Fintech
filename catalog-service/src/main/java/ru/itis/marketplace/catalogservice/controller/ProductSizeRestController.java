@@ -38,9 +38,9 @@ public class ProductSizeRestController {
     }
 
     @DeleteMapping("/{productId:\\d+}/sizes/{sizeIds}")
-    public ResponseEntity<Void> deleteAllProductSizesById(@PathVariable Long productId,
+    public ResponseEntity<Void> deleteAllProductSizesById(@PathVariable(name = "productId") Long ignoredProductId,
                                                           @PathVariable List<Long> sizeIds) {
-        productSizeService.deleteAllProductSizesById(productId, sizeIds);
+        productSizeService.deleteAllProductSizesById(sizeIds);
         return ResponseEntity.noContent().build();
     }
 

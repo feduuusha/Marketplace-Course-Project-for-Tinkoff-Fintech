@@ -44,4 +44,13 @@ public class BrandPhoto {
     public final int hashCode() {
         return this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "url = " + url + ", " +
+                "sequenceNumber = " + sequenceNumber + ", " +
+                "brandId = " + brandId + ")";
+    }
 }
