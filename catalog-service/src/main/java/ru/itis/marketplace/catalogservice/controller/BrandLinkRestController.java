@@ -32,14 +32,15 @@ public class BrandLinkRestController {
         BrandLink brandLink = brandLinkService.createBrandLink(brandId, payload.url(), payload.name());
         return ResponseEntity
                 .created(uriComponentsBuilder
-                        .replacePath("api/v1/catalog/brand/{brandId}/links/{linkId}")
+                        .replacePath("api/v1/catalog/brands/{brandId}/links/{linkId}")
                         .build(brandLink.getBrandId(), brandLink.getId()))
                 .body(brandLink);
     }
 
     @DeleteMapping("/{brandId:\\d+}/links/{linkIds}")
-    public ResponseEntity<Void> deleteAllBrandLinkById(@PathVariable Long brandId, @PathVariable List<Long> linkIds) {
-        brandLinkService.deleteAllBrandLinkById(brandId, linkIds);
+    public ResponseEntity<Void> deleteAllBrandLinkById(@PathVariable(name="brandId") Long ignoredBrandId,
+                                                       @PathVariable List<Long> linkIds) {
+        brandLinkService.deleteAllBrandLinkById(linkIds);
         return ResponseEntity.noContent().build();
     }
 }

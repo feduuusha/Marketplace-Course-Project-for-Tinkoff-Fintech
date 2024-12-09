@@ -39,7 +39,8 @@ public class ProductSizeServiceImpl implements ProductSizeService {
                 .orElseThrow(() -> new NotFoundException("Product with ID: " + productId + " not found"));
         var sizes = productSizeRepository.findByProductId(productId);
         if (sizes.stream().anyMatch(productSize -> productSize.getName().equals(name))) {
-            throw new BadRequestException("Product size with name: " + name + " already exist");
+            throw new BadRequestException("Product size with name: " + name
+                    + " and product ID: " + productId + " already exist");
         }
         var productSize = productSizeRepository.save(new ProductSize(name, productId));
         meterRegistry.counter("count of created product sizes").increment();
@@ -47,7 +48,7 @@ public class ProductSizeServiceImpl implements ProductSizeService {
     }
 
     @Override
-    public void deleteAllProductSizesById(Long brandId, List<Long> sizeIds) {
+    public void deleteAllProductSizesById(List<Long> sizeIds) {
         kafkaProducer.sendSizeIds(sizeIds);
         productSizeRepository.deleteAllByIdInBatch(sizeIds);
     }

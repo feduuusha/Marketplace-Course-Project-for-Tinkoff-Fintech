@@ -28,7 +28,7 @@ public class BrandPhotoServiceImpl implements BrandPhotoService {
     }
 
     @Override
-    public void deleteAllBrandPhotosById(Long brandId, List<Long> photoIds) {
+    public void deleteAllBrandPhotosById(List<Long> photoIds) {
         brandPhotoRepository.deleteAllByIdInBatch(photoIds);
     }
 

@@ -31,8 +31,13 @@ public class BrandLinkServiceImpl implements BrandLinkService {
     @Transactional
     public BrandLink createBrandLink(Long brandId, String url, String name) {
         brandRepository.findById(brandId).orElseThrow(() -> new NotFoundException("Brand with ID: " + brandId + " not found"));
-        if (brandLinkRepository.findByName(name).isPresent()) {
-            throw new BadRequestException("Brand link with name: " + name + " already exist");
+        var brandLinkWithSpecifiedNameAndBrandIdIsExist = brandLinkRepository
+                .findByBrandId(brandId)
+                .stream()
+                .anyMatch(brandLink -> name.equals(brandLink.getName()));
+        if (brandLinkWithSpecifiedNameAndBrandIdIsExist) {
+            throw new BadRequestException("Brand link with name: "
+                    + name + " and brand ID: " + brandId + " already exist");
         }
         var brandLink = brandLinkRepository.save(new BrandLink(url, name, brandId));
         meterRegistry.counter("count of created brand links").increment();
@@ -40,7 +45,7 @@ public class BrandLinkServiceImpl implements BrandLinkService {
     }
 
     @Override
-    public void deleteAllBrandLinkById(Long brandId, List<Long> linkIds) {
+    public void deleteAllBrandLinkById(List<Long> linkIds) {
         brandLinkRepository.deleteAllByIdInBatch(linkIds);
     }
 }

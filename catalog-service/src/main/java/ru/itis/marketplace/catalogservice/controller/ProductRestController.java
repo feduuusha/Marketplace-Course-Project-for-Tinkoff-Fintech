@@ -57,8 +57,8 @@ public class ProductRestController {
                                          @RequestParam(required = false, name = "price-from") BigDecimal priceFrom,
                                          @RequestParam(required = false, name = "price-to") BigDecimal priceTo,
                                          @RequestParam(required = false) String status,
-                                         @RequestParam(required = false) Long brandId,
-                                         @RequestParam(required = false) Long categoryId) {
+                                         @RequestParam(required = false, name = "brand-id") Long brandId,
+                                         @RequestParam(required = false, name = "category-id") Long categoryId) {
         return productService.findAllProducts(pageSize, page, sortBy, direction,
                 priceFrom, priceTo, status, brandId, categoryId);
     }

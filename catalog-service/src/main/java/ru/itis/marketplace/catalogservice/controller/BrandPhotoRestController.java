@@ -26,9 +26,9 @@ public class BrandPhotoRestController {
     }
 
     @DeleteMapping("/{brandId:\\d+}/photos/{photoIds}")
-    public ResponseEntity<Void> deleteAllBrandPhotosById(@PathVariable Long brandId,
+    public ResponseEntity<Void> deleteAllBrandPhotosById(@PathVariable(name = "brandId") Long ignoredBrandId,
                                                          @PathVariable List<Long> photoIds) {
-        brandPhotoService.deleteAllBrandPhotosById(brandId, photoIds);
+        brandPhotoService.deleteAllBrandPhotosById(photoIds);
         return ResponseEntity.noContent().build();
     }
 
@@ -39,7 +39,7 @@ public class BrandPhotoRestController {
         BrandPhoto brandPhoto = brandPhotoService.createBrandPhoto(brandId, payload.url(), payload.sequenceNumber());
         return ResponseEntity
                 .created(uriComponentsBuilder
-                        .replacePath("api/v1/catalog/brand/{brandId}/photos/{photoId}")
+                        .replacePath("api/v1/catalog/brands/{brandId}/photos/{photoId}")
                         .build( brandPhoto.getBrandId(), brandPhoto.getId()))
                 .body(brandPhoto);
     }

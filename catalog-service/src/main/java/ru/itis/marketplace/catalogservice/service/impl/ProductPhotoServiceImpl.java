@@ -31,7 +31,7 @@ public class ProductPhotoServiceImpl implements ProductPhotoService {
     }
 
     @Override
-    public void deleteProductPhotosByIds(Long productId, List<Long> photosIds) {
+    public void deleteProductPhotosByIds(List<Long> photosIds) {
         productPhotoRepository.deleteAllByIdInBatch(photosIds);
     }
 
