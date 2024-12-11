@@ -31,6 +31,10 @@ public class UserBrandServiceImpl implements UserBrandService {
         if (!brandExist) {
             throw new BadRequestException("Brand with ID: " + brandId + " does not exist");
         }
+        var userBrand = userBrandRepository.findByBrandId(brandId);
+        if (userBrand.isPresent()) {
+            throw new BadRequestException("Brand with ID: " + brandId + " is already the property of the user with ID: " + userBrand.get().getUserId());
+        }
         return userBrandRepository.save(new UserBrand(userId, brandId));
     }
 

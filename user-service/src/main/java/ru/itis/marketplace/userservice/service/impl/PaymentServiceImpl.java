@@ -33,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     private String cancelUrl;
     @Value("${payment.api-key}")
     private String apiKey;
-    @Value("${payment.currencyCode}")
+    @Value("${payment.currency-code}")
     private String currencyCode;
     @Value("${payment.file-service-base-url}")
     private String fileServiceBaseUrl;
@@ -51,15 +51,15 @@ public class PaymentServiceImpl implements PaymentService {
                                     .builder()
                                     .setDescription(paymentId)
                                     .build());
-            DistributionSummary numberOfItems = DistributionSummary.builder("number of different items in order").serviceLevelObjectives(1, 2, 5, 10).register(meterRegistry);
+            DistributionSummary numberOfItems = meterRegistry.summary("number of different items in order");
             numberOfItems.record(orderItems.size());
             for (var orderItem : orderItems) {
                 var product = products.get(orderItem.getProductId());
                 BigDecimal bd = product.price().setScale(2, RoundingMode.HALF_UP);
-                DistributionSummary orderProductPrice = DistributionSummary.builder("order product price").serviceLevelObjectives(500d, 1000d, 2000d, 5000d, 10000d).register(meterRegistry);
-                orderProductPrice.record(bd.doubleValue());
-                DistributionSummary quantityOfProduct = DistributionSummary.builder("quantity of a specific product").serviceLevelObjectives(1, 2, 5, 10).register(meterRegistry);
+                DistributionSummary orderProductPrice = meterRegistry.summary("order product price");
+                DistributionSummary quantityOfProduct = meterRegistry.summary("quantity of a specific product");
                 quantityOfProduct.record(orderItem.getQuantity());
+                orderProductPrice.record(bd.doubleValue());
                 var productData = SessionCreateParams.LineItem.PriceData.ProductData
                         .builder()
                         .setName(product.name())
@@ -108,6 +108,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .build();
 
             Refund.create(params);
+            meterRegistry.counter("count of refunds").increment();
         } catch (StripeException exception) {
             throw new UnavailableServiceException("Stipe payment is unavailable: " + exception.getMessage());
         }

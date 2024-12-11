@@ -1,0 +1,198 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/products/200/sizes/201"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": 201,
+          "name": "XL",
+          "productId": 200
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/products/404/sizes/405"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "type": "/swagger-ui/index.html",
+          "title": "Resource Not Found",
+          "status": 404,
+          "detail": "Size with ID: 405 not found",
+          "instance": "/api/v1/catalog/products/404/sizes/405"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/products/400/sizes/401"
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "type": "/swagger-ui/index.html",
+          "title": "Bad Request",
+          "status": 400,
+          "detail": "Bad request",
+          "instance": "/api/v1/catalog/products/400/sizes/401"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/products/500/sizes/501"
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "type": "about:blank",
+          "title": "Internal Server Error",
+          "status": 500,
+          "detail": "something wrong",
+          "instance": "/api/v1/catalog/products/500/sizes/501"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/products/by-ids/1%2C2%2C3"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": [
+          {
+            "id": 1,
+            "name": "123",
+            "price": 100.99,
+            "description": "123",
+            "requestStatus": "under_consideration",
+            "categoryId": 1,
+            "brandId": 1,
+            "photos": [],
+            "sizes": [
+              {
+                "id": 1,
+                "name": "XL",
+                "productId": 1
+              },
+              {
+                "id": 2,
+                "name": "L",
+                "productId": 1
+              },
+              {
+                "id": 3,
+                "name": "M",
+                "productId": 1
+              }
+            ],
+            "additionDateTime": "2024-12-05T10:32:18.215788Z",
+            "updateDateTime": "2024-12-05T10:32:18.215833Z"
+          },
+          {
+            "id": 2,
+            "name": "123",
+            "price": 100.99,
+            "description": "123",
+            "requestStatus": "under_consideration",
+            "categoryId": 1,
+            "brandId": 1,
+            "photos": [],
+            "sizes": [
+              {
+                "id": 1,
+                "name": "XL",
+                "productId": 1
+              },
+              {
+                "id": 2,
+                "name": "L",
+                "productId": 1
+              },
+              {
+                "id": 3,
+                "name": "M",
+                "productId": 1
+              }
+            ],
+            "additionDateTime": "2024-12-05T10:32:18.215788Z",
+            "updateDateTime": "2024-12-05T10:32:18.215833Z"
+          },
+          {
+            "id": 3,
+            "name": "123",
+            "price": 100.99,
+            "description": "123",
+            "requestStatus": "under_consideration",
+            "categoryId": 1,
+            "brandId": 1,
+            "photos": [],
+            "sizes": [
+              {
+                "id": 1,
+                "name": "XL",
+                "productId": 1
+              },
+              {
+                "id": 2,
+                "name": "L",
+                "productId": 1
+              },
+              {
+                "id": 3,
+                "name": "M",
+                "productId": 1
+              }
+            ],
+            "additionDateTime": "2024-12-05T10:32:18.215788Z",
+            "updateDateTime": "2024-12-05T10:32:18.215833Z"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/products/by-ids/5%2C0%2C3"
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "type": "about:blank",
+          "title": "Internal Server Error",
+          "status": 500,
+          "detail": "something wrong",
+          "instance": "/api/v1/catalog/products/by-ids/5%2C0%2C3"
+        }
+      }
+    }
+  ]
+}

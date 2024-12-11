@@ -11,7 +11,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.userservice.exception.BadRequestException;
-import ru.itis.marketplace.userservice.service.StripeWebHookService;
+import ru.itis.marketplace.userservice.service.WebHookService;
 import ru.itis.marketplace.userservice.webhookhandler.WebHookHandler;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class StripeWebHookServiceImpl implements StripeWebHookService {
+public class StripeWebHookServiceImpl implements WebHookService {
 
     private final ObjectMapper objectMapper;
     private final Map<String, WebHookHandler> eventHandlers;
