@@ -20,7 +20,7 @@ public class SuccessfulEventsWebHookHandler implements WebHookHandler {
     @Override
     public void handle(String paymentId, String paymentIntentId) {
         var order = orderService.findByPaymentId(paymentId);
-        if (order.getStatus().equals("must be refunded")) {
+        if ("must be refunded".equals(order.getStatus())) {
             paymentService.refundPayment(paymentIntentId);
             orderService.updateOrderStatusAndPaymentIntentByPaymentId(paymentId, "refunded", paymentIntentId);
         } else {

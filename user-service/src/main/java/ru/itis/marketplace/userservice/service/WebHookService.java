@@ -1,5 +1,5 @@
 package ru.itis.marketplace.userservice.service;
 
-public interface StripeWebHookService {
+public interface WebHookService {
     void handlePaymentIntentWebHook(String signature, String body);
 }

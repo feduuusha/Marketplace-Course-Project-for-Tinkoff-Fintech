@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
         userRepository
                 .findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with ID: " + userId + " not found"));
-        Order order = new Order(UUID.randomUUID().toString(), country, locality, region, postalCode, street, houseNumber, userId, null, "Awaiting payment", description);
+        Order order = new Order(UUID.randomUUID().toString(), country, locality, region, postalCode, street, houseNumber, userId, null, "awaiting payment", description);
 
         List<Long> productIds = orderItems
                 .stream()
