@@ -32,6 +32,6 @@ public class StripeWebHookRestController {
     @PostMapping("/change-order-status")
     public ResponseEntity<Void> catchPaymentIntentWebHook(@RequestHeader(name = "Stripe-Signature") String signature, @RequestBody String body) {
         webHookService.handlePaymentIntentWebHook(signature, body);
-        return ResponseEntity.of(Optional.empty());
+        return ResponseEntity.ok().build();
     }
 }
