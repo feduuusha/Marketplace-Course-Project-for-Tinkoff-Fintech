@@ -1,0 +1,63 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/brands/200"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": 200,
+          "name": "brand",
+          "description": "desc",
+          "linkToLogo": "link",
+          "requestStatus": "under_consideration",
+          "brandPhotos": [],
+          "brandLinks": []
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/brands/404"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "type": "/swagger-ui/index.html",
+          "title": "Resource Not Found",
+          "status": 404,
+          "detail": "Brand with ID: 404 not found",
+          "instance": "/api/v1/catalog/brands/404"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/v1/catalog/brands/500"
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "type": "about:blank",
+          "title": "Internal Server Error",
+          "status": 500,
+          "detail": "something wrong",
+          "instance": "/api/v1/catalog/brands/500"
+        }
+      }
+    }
+  ]
+}

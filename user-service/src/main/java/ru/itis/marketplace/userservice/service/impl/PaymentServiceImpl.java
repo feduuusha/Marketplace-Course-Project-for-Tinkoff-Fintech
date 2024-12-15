@@ -2,8 +2,12 @@ package ru.itis.marketplace.userservice.service.impl;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Refund;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.RefundCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,13 +25,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
+    private final MeterRegistry meterRegistry;
+
     @Value("${payment.success-url}")
     private String successUrl;
     @Value("${payment.cancel-url}")
     private String cancelUrl;
     @Value("${payment.api-key}")
     private String apiKey;
-    @Value("${payment.currencyCode}")
+    @Value("${payment.currency-code}")
     private String currencyCode;
     @Value("${payment.file-service-base-url}")
     private String fileServiceBaseUrl;
@@ -41,11 +47,19 @@ public class PaymentServiceImpl implements PaymentService {
                             .setMode(SessionCreateParams.Mode.PAYMENT)
                             .setSuccessUrl(successUrl)
                             .setCancelUrl(cancelUrl)
-                            .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder().setDescription(paymentId).build())
-                            .setClientReferenceId(paymentId);
+                            .setPaymentIntentData(SessionCreateParams.PaymentIntentData
+                                    .builder()
+                                    .setDescription(paymentId)
+                                    .build());
+            DistributionSummary numberOfItems = meterRegistry.summary("number of different items in order");
+            numberOfItems.record(orderItems.size());
             for (var orderItem : orderItems) {
                 var product = products.get(orderItem.getProductId());
                 BigDecimal bd = product.price().setScale(2, RoundingMode.HALF_UP);
+                DistributionSummary orderProductPrice = meterRegistry.summary("order product price");
+                DistributionSummary quantityOfProduct = meterRegistry.summary("quantity of a specific product");
+                quantityOfProduct.record(orderItem.getQuantity());
+                orderProductPrice.record(bd.doubleValue());
                 var productData = SessionCreateParams.LineItem.PriceData.ProductData
                         .builder()
                         .setName(product.name())
@@ -73,11 +87,30 @@ public class PaymentServiceImpl implements PaymentService {
                                 .build()
                 );
             }
-            return Session.create(params.build()).getUrl();
+            var sessionUrl = Session.create(params.build()).getUrl();
+            meterRegistry.counter("count of payments").increment();
+            return sessionUrl;
         } catch (StripeException exception) {
-            throw new UnavailableServiceException(exception.getMessage());
+            throw new UnavailableServiceException("Stipe payment is unavailable: " + exception.getMessage());
         } catch (Exception exception) {
             throw new IllegalStateException(exception);
+        }
+    }
+
+    @Override
+    public void refundPayment(String paymentIntentId) {
+        try {
+            Stripe.apiKey = apiKey;
+
+            RefundCreateParams params =
+                    RefundCreateParams.builder()
+                            .setPaymentIntent(paymentIntentId)
+                            .build();
+
+            Refund.create(params);
+            meterRegistry.counter("count of refunds").increment();
+        } catch (StripeException exception) {
+            throw new UnavailableServiceException("Stipe payment is unavailable: " + exception.getMessage());
         }
     }
 }

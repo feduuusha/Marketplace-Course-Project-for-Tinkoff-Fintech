@@ -3,6 +3,7 @@ package ru.itis.marketplace.fileservice.service.impl;
 import io.awspring.cloud.s3.Location;
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,16 @@ public class ImageServiceImpl implements ImageService {
 
     private final S3Template s3Template;
     private final ImageResizerService imageResizerService;
+    private final MeterRegistry meterRegistry;
     @Value("${supported-types}")
     private List<String> supportedContentTypes;
 
     @Override
     public byte[] loadImage(String bucketName, String objectKey) {
         try {
-            return IoUtils.toByteArray(s3Template.download(bucketName, objectKey).getInputStream());
+            var image = IoUtils.toByteArray(s3Template.download(bucketName, objectKey).getInputStream());
+            meterRegistry.counter("count of loaded images").increment();
+            return image;
         } catch (IOException exception) {
             throw new IllegalStateException("It is impossible to load a image, because: " + exception.getMessage());
         }
@@ -38,6 +42,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void deleteImage(String bucketName, String objectKey) {
         s3Template.deleteObject(bucketName, objectKey);
+        meterRegistry.counter("count of deleted images").increment();
     }
 
     @Override
@@ -55,14 +60,14 @@ public class ImageServiceImpl implements ImageService {
             if (lastIndexOfDot == -1 || lastIndexOfDot == filename.length() - 1) {
                 throw new BadRequestException("File should have extension");
             }
-            if (width != null && height != null &&
-                    file.getContentType() != null && !file.getContentType().equals("image/svg+xml")) {
+            if (width != null && height != null && !"image/svg+xml".equals(file.getContentType())) {
                 inputStream = imageResizerService.resizeImage(inputStream, width, height,
                         filename.substring(lastIndexOfDot + 1));
             }
             S3Resource resource = s3Template.upload(bucketName,
                     (UUID.randomUUID() + filename.substring(lastIndexOfDot)), inputStream);
             Location location = resource.getLocation();
+            meterRegistry.counter("count of uploaded images").increment();
             return location.getBucket() + "/" + location.getObject();
         } catch (IOException exception) {
             throw new IllegalStateException("It is impossible to upload a image, because: " + exception.getMessage());

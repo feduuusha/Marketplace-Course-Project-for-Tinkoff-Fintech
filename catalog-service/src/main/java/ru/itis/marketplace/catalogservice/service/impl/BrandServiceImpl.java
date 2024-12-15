@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -8,10 +9,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.itis.marketplace.catalogservice.entity.Brand;
+import ru.itis.marketplace.catalogservice.entity.ProductSize;
 import ru.itis.marketplace.catalogservice.exception.BadRequestException;
 import ru.itis.marketplace.catalogservice.exception.NotFoundException;
+import ru.itis.marketplace.catalogservice.kafka.KafkaProducer;
 import ru.itis.marketplace.catalogservice.repository.BrandRepository;
 import ru.itis.marketplace.catalogservice.service.BrandService;
+import ru.itis.marketplace.catalogservice.service.ProductService;
 
 import java.util.List;
 
@@ -20,6 +24,9 @@ import java.util.List;
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
+    private final ProductService productService;
+    private final KafkaProducer kafkaProducer;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public Brand findBrandById(Long id) {
@@ -42,18 +49,26 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public void deleteBrandById(Long id) {
+        var products = productService.findAllProducts(null, null, null, null, null, null, null, id, null);
+        var sizeIds = products.stream().flatMap(product -> product.getSizes().stream()).map(ProductSize::getId).toList();
+        kafkaProducer.sendSizeIds(sizeIds);
+        kafkaProducer.sendBrandIds(List.of(id));
         brandRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public List<Brand> findAllBrands(String status, Integer pageSize, Integer page, String sortedBy) {
         Sort sort = sortedBy == null ? Sort.unsorted() : Sort.by(sortedBy);
         Pageable pageable = Pageable.unpaged(sort);
         if (pageSize != null && page != null) {
             pageable = PageRequest.of(page, pageSize, sort);
         }
-        Specification<Brand> statusSpec = BrandRepository.buildFindALlSpecificationByStatus(status);
-        return brandRepository.findAll(statusSpec, pageable).toList();
+        Specification<Brand> statusSpec = BrandRepository.buildFindAllSpecificationByStatus(status);
+        var brands = brandRepository.findAll(statusSpec, pageable).toList();
+        brandRepository.joinLinksToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        brandRepository.joinPhotosToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        return brands;
     }
 
 
@@ -62,7 +77,9 @@ public class BrandServiceImpl implements BrandService {
         if (brandRepository.findByName(name).isPresent()) {
             throw new BadRequestException("Brand with name: " + name + " already exist");
         }
-        return brandRepository.save(new Brand(name, description, linkToLogo));
+        var brand = brandRepository.save(new Brand(name, description, linkToLogo));
+        meterRegistry.counter("count of created brands").increment();
+        return brand;
     }
 
     @Override
@@ -71,8 +88,12 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public List<Brand> findBrandsByNameLike(String name) {
-        return brandRepository.findByNameLikeIgnoreCase(name);
+        var brands = brandRepository.findByNameLikeIgnoreCase(name);
+        brandRepository.joinLinksToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        brandRepository.joinPhotosToBrandsWithIds(brands.stream().map(Brand::getId).toList());
+        return brands;
     }
 
     @Override

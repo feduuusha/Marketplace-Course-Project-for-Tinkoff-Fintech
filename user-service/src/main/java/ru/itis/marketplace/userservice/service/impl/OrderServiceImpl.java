@@ -1,20 +1,27 @@
 package ru.itis.marketplace.userservice.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.itis.marketplace.userservice.client.BrandsRestClient;
 import ru.itis.marketplace.userservice.client.ProductsRestClient;
 import ru.itis.marketplace.userservice.controller.payload.order.NewOrderItemPayload;
-import ru.itis.marketplace.userservice.entity.CustomerOrder;
+import ru.itis.marketplace.userservice.entity.Order;
 import ru.itis.marketplace.userservice.entity.OrderItem;
 import ru.itis.marketplace.userservice.exception.BadRequestException;
+import ru.itis.marketplace.userservice.exception.NotFoundException;
 import ru.itis.marketplace.userservice.model.Product;
-import ru.itis.marketplace.userservice.repository.MarketPlaceUserRepository;
+import ru.itis.marketplace.userservice.repository.OrderItemRepository;
+import ru.itis.marketplace.userservice.repository.UserRepository;
 import ru.itis.marketplace.userservice.repository.OrderRepository;
 import ru.itis.marketplace.userservice.service.OrderService;
 import ru.itis.marketplace.userservice.service.PaymentService;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,61 +29,72 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ProductsRestClient productsRestClient;
-    private final MarketPlaceUserRepository userRepository;
+    private final UserRepository userRepository;
     private final PaymentService paymentService;
-    private final BrandsRestClient brandsRestClient;
 
     @Override
-    public List<CustomerOrder> findAllOrdersByUserIdAndOrderStatus(Long userId, String status) {
-        userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with ID: " + userId + " not found"));
-        if (status == null || status.isBlank()) {
-            return this.orderRepository.findByUserId(userId);
-        } else {
-            return this.orderRepository.findByUserIdAndStatus(userId, status);
+    public List<Order> findOrdersByUserIdAndOrderStatus(Long userId, String status, Integer pageSize, Integer page, String sortedBy) {
+        userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with ID: " + userId + " not found"));
+        Sort sort = sortedBy != null ? Sort.by(sortedBy) : Sort.unsorted();
+        Pageable pageable = Pageable.unpaged(sort);
+        if (page != null && pageSize != null) {
+            pageable = PageRequest.of(page, pageSize, sort);
         }
+        Specification<Order> specification = OrderRepository.buildSpecification(userId, status);
+        return orderRepository.findAll(specification, pageable).toList();
     }
 
     @Override
-    public CustomerOrder findOrderByUserIdAndByOrderId(Long userId, Long orderId) {
-        return this.orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order with ID: " + orderId + " not found"));
+    public Order findOrderById(Long orderId) {
+        return orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Order with ID: " + orderId + " not found"));
     }
 
     @Override
-    public CustomerOrder createOrder(Long userId, String country, String locality, String region, String postalCode,
-                                     String street, String houseNumber, String description, List<NewOrderItemPayload> orderItems) {
-        var user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with ID: " + userId + " not found"));
-        CustomerOrder order = new CustomerOrder(null, null, UUID.randomUUID().toString(), country, locality, region, postalCode, street, houseNumber, user, new ArrayList<>(), "Awaiting payment", description, null, null);
+    public Order createOrder(Long userId, String country, String locality, String region, String postalCode,
+                             String street, String houseNumber, String description, List<NewOrderItemPayload> orderItems) {
+        userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with ID: " + userId + " not found"));
+        Order order = new Order(UUID.randomUUID().toString(), country, locality, region, postalCode, street, houseNumber, userId, null, "awaiting payment", description);
 
         List<Long> productIds = orderItems
                 .stream()
                 .map(NewOrderItemPayload::productId)
                 .toList();
 
-        Map<Long, Product> products = this.productsRestClient.findProductsByIds(productIds)
+        Map<Long, Product> products = productsRestClient.findProductsByIds(productIds)
                 .stream()
-                .collect(Collectors.toMap(Product::id, product -> product));
+                .collect(Collectors.toMap(Product::id, Function.identity()));
 
+        var orderItemsList = new ArrayList<OrderItem>(orderItems.size());
         for (NewOrderItemPayload orderItem : orderItems) {
-            if (products.containsKey(orderItem.productId())) {
-                var product = products.get(orderItem.productId());
-                if (product.sizes().stream().anyMatch(productSize -> productSize.id().equals(orderItem.productSizeId()))) {
-                    order.getOrderItems().add(new OrderItem(null, orderItem.productId(), orderItem.productSizeId(), product.brand().id(), orderItem.amount(), order));
-                } else {
-                    throw new BadRequestException("Product Size with ID: " + orderItem.productSizeId() + " was not found on Product with id: " + orderItem.productId());
-                }
-            } else {
-                throw new BadRequestException("Product with ID: " + orderItem.productId() + " do not exist");
+            if (!products.containsKey(orderItem.productId())) {
+                throw new BadRequestException("Product with ID: " + orderItem.productId() + " does not exist");
             }
+            var product = products.get(orderItem.productId());
+            var productSize = product.sizes()
+                    .stream()
+                    .filter((size) -> size.id().equals(orderItem.productSizeId()))
+                    .findFirst()
+                    .orElseThrow(() -> new BadRequestException("Product with ID: " + product.id() + " does not have a size with ID: " + orderItem.productSizeId()));
+            orderItemsList.add(new OrderItem(product.id(), productSize.id(), product.brandId(), orderItem.quantity()));
         }
-        order.setPaymentLink(this.paymentService.createPayment(order.getPaymentId(), products, order.getOrderItems()));
-        return this.orderRepository.save(order);
+        order.setPaymentLink(paymentService.createPayment(order.getPaymentId(), products, orderItemsList));
+        var savedOrder = orderRepository.save(order);
+        orderItemsList.forEach((orderItem -> orderItem.setOrderId(savedOrder.getId())));
+        orderItemRepository.saveAll(orderItemsList);
+        return savedOrder;
     }
 
     @Override
-    public void updateOrderById(Long userId, Long orderId, String country, String locality, String region, String postalCode, String street, String houseNumber, String description) {
-        this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with ID: " + userId + " not found"));
-        var order = this.orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order with ID: " + orderId + " not found"));
+    public void updateOrderById(Long orderId, String country, String locality, String region, String postalCode, String street, String houseNumber, String description) {
+        Order order = orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order with ID: " + orderId + " not found"));
         order.setCountry(country);
         order.setLocality(locality);
         order.setRegion(region);
@@ -84,38 +102,62 @@ public class OrderServiceImpl implements OrderService {
         order.setStreet(street);
         order.setHouseNumber(houseNumber);
         order.setDescription(description);
-        this.orderRepository.save(order);
-    }
-
-    @Override
-    public void updateOrderStatusById(Long userId, Long orderId, String status) {
-        this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with ID: " + userId + " not found"));
-        var order = this.orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order with ID: " + orderId + " not found"));
-        order.setStatus(status);
-        this.orderRepository.save(order);
-    }
-
-    @Override
-    public List<CustomerOrder> findOrdersByBrandId(Long userId, Long brandId) {
-        this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with ID: " + userId + " not found"));
-        if (this.brandsRestClient.brandWithIdExist(brandId)) {
-            var orders = this.orderRepository.findCustomerOrderThatContainsOrderItemsWithSpecifiedBrandId(brandId);
-            for (var order : orders) {
-                order.setOrderItems(order.getOrderItems()
-                        .stream()
-                        .filter(orderItem -> Objects.equals(orderItem.getBrandId(), brandId))
-                        .toList());
-            }
-            return orders;
-        } else {
-            throw new NoSuchElementException("Brand with ID: " + brandId + " not found");
-        }
-    }
-
-    @Override
-    public void updateOrderStatusByPaymentId(String paymentId, String orderStatus) {
-        var order = this.orderRepository.findByPaymentId(paymentId).orElseThrow(() -> new NoSuchElementException("Order with paymentId: " + paymentId + " not found"));
-        order.setStatus(orderStatus);
         orderRepository.save(order);
     }
+
+    @Override
+    public void updateOrderStatusById(Long orderId, String status) {
+        Order order = orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order with ID: " + orderId + " not found"));
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public List<Order> findOrdersByBrandId(Long brandId) {
+        List<Order> orders = orderRepository.findOrderThatContainsItemsWithSpecifiedBrandId(brandId);
+        orders.forEach((order) ->
+            order.setOrderItems(
+                    order.getOrderItems()
+                            .stream()
+                            .filter((item) -> brandId.equals(item.getBrandId()))
+                            .toList())
+        );
+        return orders;
+    }
+
+    @Override
+    public void updateOrderStatusAndPaymentIntentByPaymentId(String paymentId, String orderStatus, String paymentIntentId) {
+        Order order = orderRepository
+                .findByPaymentId(paymentId)
+                .orElseThrow(() -> new BadRequestException("Order with payment ID: " + paymentId + " not found"));
+        order.setStatus(orderStatus);
+        order.setPaymentIntentId(paymentIntentId);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public List<Order> findOrderThatContainsSizeIds(List<Long> sizeIds) {
+        return orderRepository.findOrderThatContainsSizeIds(sizeIds);
+    }
+
+    @Override
+    public Order findByPaymentId(String paymentId) {
+        return orderRepository
+                .findByPaymentId(paymentId)
+                .orElseThrow(() -> new NotFoundException("Order with paymentId: " + paymentId + " not found"));
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderItemsSetNewBrandIdForProductId(Long productId, Long newBrandId) {
+        orderItemRepository.updateBrandIdForProductWithId(productId, newBrandId);
+    }
+
+    @Override
+    public void deleteAllOrderItemsByOrderId(Long orderId) {
+        orderItemRepository.deleteByOrderId(orderId);
+    }
+
 }

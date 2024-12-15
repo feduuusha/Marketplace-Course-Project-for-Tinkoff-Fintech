@@ -1,0 +1,14 @@
+filebeat.inputs:
+  - enabled: true
+    encoding: utf-8
+    exclude_files: ['\.gz$']
+    json:
+      add_error_key: true
+      keys_under_root: true
+      overwrite_keys: true
+    paths:
+      - /var/log/*.log
+    scan_frequency: 10s
+    type: log
+output.logstash:
+  hosts: "logstash:5044"

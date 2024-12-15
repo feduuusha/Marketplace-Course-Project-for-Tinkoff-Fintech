@@ -26,35 +26,231 @@ services:
     restart: always
 
   catalog-service:
-    image: feduuusha/catalog-service:0.0.1-SNAPSHOT
+    image: ghcr.io/feduuusha/catalog-service:latest
+    container_name: catalog-service
     ports:
       - "8081:8081"
     env_file:
       - .env
+    volumes:
+      - ./catalog-service/log/application.log:/workspace/log/application.log:rw
     networks:
       - marketplace_network
+    depends_on:
+      - catalog-db
+      - kafka1
     restart: always
 
   user-service:
-    image: feduuusha/user-service:0.0.1-SNAPSHOT
+    image: ghcr.io/feduuusha/user-service:latest
+    container_name: user-service
     ports:
       - "8082:8082"
     env_file:
       - .env
+    volumes:
+      - ./user-service/log/application.log:/workspace/log/application.log:rw
     networks:
       - marketplace_network
+    depends_on:
+      - user-db
+      - kafka1
     restart: always
 
   file-service:
-    image: feduuusha/file-service:0.0.1-SNAPSHOT
+    image: ghcr.io/feduuusha/file-service:latest
+    container_name: file-service
     ports:
       - "8083:8083"
     env_file:
       - .env
+    volumes:
+      - ./file-service/log/application.log:/workspace/log/application.log:rw
     networks:
       - marketplace_network
     restart: always
 
+  elasticsearch:
+    image: elasticsearch:7.14.0
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elk_data:/usr/share/elasticsearch/data/
+      - ./elk-service/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    environment:
+      - discovery.type=single-node
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+      - cluster.name=elasticsearch
+      - bootstrap.memory_lock=true
+    networks:
+      - elk
+
+  logstash:
+    image: logstash:7.14.0
+    container_name: logstash
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      - ./elk-service/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./elk-service/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ls_data:/usr/share/logstash/data
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: kibana:7.14.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./elk-service/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - kb_data:/usr/share/kibana/data
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  filebeat-catalog-service:
+    image: elastic/filebeat:7.14.0
+    container_name: filebeat-catalog-service
+    user: root
+    command: ["filebeat", "-e", "--strict.perms=false"]
+    volumes:
+      - ./elk-service/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./catalog-service/log/:/var/log/:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - elk
+    depends_on:
+      - catalog-service
+      - logstash
+      - kibana
+
+  filebeat-user-service:
+    image: elastic/filebeat:7.14.0
+    container_name: filebeat-user-service
+    user: root
+    command: [ "filebeat", "-e", "--strict.perms=false" ]
+    volumes:
+      - ./elk-service/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./user-service/log/:/var/log/:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - elk
+    depends_on:
+      - user-service
+      - logstash
+      - kibana
+
+  filebeat-file-service:
+    image: elastic/filebeat:7.14.0
+    container_name: filebeat-file-service
+    user: root
+    command: [ "filebeat", "-e", "--strict.perms=false" ]
+    volumes:
+      - ./elk-service/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./file-service/log/:/var/log/:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - elk
+    depends_on:
+      - file-service
+      - logstash
+      - kibana
+
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./grafana-service/prometheus/tmp:/prometheus
+      - ./grafana-service/prometheus:/etc/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
+    env_file:
+      - .env
+    networks:
+      - marketplace_network
+    depends_on:
+      - file-service
+      - user-service
+      - catalog-service
+
+  grafana:
+    image: grafana/grafana:10.0.3
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana-service/grafana/tmp:/var/lib/grafana
+      - ./grafana-service/grafana/grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - marketplace_network
+    depends_on:
+      - prometheus
+
+  alertmanager:
+    image: prom/alertmanager:v0.25.0
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./grafana-service/alert-manager/tmp:/data
+      - ./grafana-service/alert-manager:/config
+    command: --config.file=/config/alertmanager.yaml --log.level=debug
+    env_file:
+      - .env
+    networks:
+      - marketplace_network
+    depends_on:
+      - prometheus
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.8.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - marketplace_network
+
+
+  kafka1:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - marketplace_network
+    depends_on:
+      - zookeeper
+
+volumes:
+  elk_data:
+  ls_data:
+  kb_data:
+
 networks:
   marketplace_network:
+    driver: bridge
+
+  elk:
     driver: bridge

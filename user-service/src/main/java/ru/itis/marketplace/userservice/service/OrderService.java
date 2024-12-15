@@ -1,22 +1,26 @@
 package ru.itis.marketplace.userservice.service;
 
 import ru.itis.marketplace.userservice.controller.payload.order.NewOrderItemPayload;
-import ru.itis.marketplace.userservice.entity.CustomerOrder;
+import ru.itis.marketplace.userservice.entity.Order;
 
 import java.util.List;
 
 public interface OrderService {
-    List<CustomerOrder> findAllOrdersByUserIdAndOrderStatus(Long userId, String status);
+    List<Order> findOrdersByUserIdAndOrderStatus(Long userId, String status, Integer pageSize, Integer page, String sortedBy);
 
-    CustomerOrder findOrderByUserIdAndByOrderId(Long userId, Long orderId);
+    Order findOrderById(Long orderId);
 
-    CustomerOrder createOrder(Long userId, String country, String locality, String region, String postalCode, String street, String houseNumber, String description, List<NewOrderItemPayload> orderItems);
+    Order createOrder(Long userId, String country, String locality, String region, String postalCode, String street, String houseNumber, String description, List<NewOrderItemPayload> orderItems);
 
-    void updateOrderById(Long userId, Long orderId, String country, String locality, String region, String postalCode, String street, String houseNumber, String description);
+    void updateOrderById(Long orderId, String country, String locality, String region, String postalCode, String street, String houseNumber, String description);
 
-    void updateOrderStatusById(Long userId, Long orderId, String status);
+    void updateOrderStatusById(Long orderId, String status);
 
-    List<CustomerOrder> findOrdersByBrandId(Long userId, Long brandId);
+    List<Order> findOrdersByBrandId(Long brandId);
 
-    void updateOrderStatusByPaymentId(String paymentId, String orderStatus);
+    void updateOrderStatusAndPaymentIntentByPaymentId(String paymentId, String orderStatus, String paymentIntentId);
+    List<Order> findOrderThatContainsSizeIds(List<Long> sizeIds);
+    Order findByPaymentId(String paymentId);
+    void updateOrderItemsSetNewBrandIdForProductId(Long productId, Long newBrandId);
+    void deleteAllOrderItemsByOrderId(Long orderId);
 }

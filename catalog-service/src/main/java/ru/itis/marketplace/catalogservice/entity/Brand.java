@@ -50,4 +50,14 @@ public class Brand {
     public final int hashCode() {
         return this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "name = " + name + ", " +
+                "description = " + description + ", " +
+                "linkToLogo = " + linkToLogo + ", " +
+                "requestStatus = " + requestStatus + ")";
+    }
 }

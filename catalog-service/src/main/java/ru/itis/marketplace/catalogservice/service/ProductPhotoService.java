@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ProductPhotoService {
     List<ProductPhoto> findProductPhotos(Long productId);
-    void deleteProductPhotosByIds(Long productId, List<Long> photosIds);
+    void deleteProductPhotosByIds(List<Long> photosIds);
     ProductPhoto createProductPhoto(Long productId, String url, Long sequenceNumber);
 }

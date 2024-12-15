@@ -14,13 +14,15 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     Optional<Product> findByName(String name);
-    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.photos photos LEFT JOIN p.sizes sizes WHERE LOWER(p.name) LIKE LOWER(:name)")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.photos photos WHERE p.id in (:ids)")
+    List<Product> joinPhotosToProductWithIds(List<Long> ids);
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.sizes sizes WHERE p.id in (:ids)")
+    List<Product> joinSizesToBrandWithIds(List<Long> ids);
+    @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)")
     List<Product> findByNameLikeIgnoreCase(String name);
 
     static Specification<Product> buildProductSpecification(BigDecimal priceFrom, BigDecimal priceTo, String status, Long brandId, Long categoryId) {
         return (root, query, criteriaBuilder) -> {
-            root.fetch("photos");
-            root.fetch("sizes");
             List<Predicate> predicates = new ArrayList<>(5);
             if (status != null) {
                 predicates.add(criteriaBuilder.equal(root.get("requestStatus"), status));

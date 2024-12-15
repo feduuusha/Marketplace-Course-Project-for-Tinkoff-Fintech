@@ -1,5 +1,6 @@
 package ru.itis.marketplace.catalogservice.service.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ public class BrandPhotoServiceImpl implements BrandPhotoService {
 
     private final BrandPhotoRepository brandPhotoRepository;
     private final BrandRepository brandRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public List<BrandPhoto> findBrandPhotos(Long brandId) {
@@ -26,7 +28,7 @@ public class BrandPhotoServiceImpl implements BrandPhotoService {
     }
 
     @Override
-    public void deleteAllBrandPhotosById(Long brandId, List<Long> photoIds) {
+    public void deleteAllBrandPhotosById(List<Long> photoIds) {
         brandPhotoRepository.deleteAllByIdInBatch(photoIds);
     }
 
@@ -34,6 +36,8 @@ public class BrandPhotoServiceImpl implements BrandPhotoService {
     @Transactional
     public BrandPhoto createBrandPhoto(Long brandId, String url, Long sequenceNumber) {
         brandRepository.findById(brandId).orElseThrow(() -> new NotFoundException("Brand with ID: " + brandId + " not found"));
-        return brandPhotoRepository.save(new BrandPhoto(url, sequenceNumber, brandId));
+        var brandPhoto = brandPhotoRepository.save(new BrandPhoto(url, sequenceNumber, brandId));
+        meterRegistry.counter("count of created brand photos").increment();
+        return brandPhoto;
     }
 }

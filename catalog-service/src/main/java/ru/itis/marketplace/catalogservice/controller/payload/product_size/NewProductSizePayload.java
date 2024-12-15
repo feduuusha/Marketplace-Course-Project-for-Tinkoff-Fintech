@@ -1,11 +1,11 @@
 package ru.itis.marketplace.catalogservice.controller.payload.product_size;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
 
 public record NewProductSizePayload(
         @NotBlank
-        @Size(max = 255)
+        @Length(max = 255)
         String name
 ) {
 }

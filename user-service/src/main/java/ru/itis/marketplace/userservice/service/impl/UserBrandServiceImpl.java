@@ -3,56 +3,62 @@ package ru.itis.marketplace.userservice.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.itis.marketplace.userservice.exception.NotFoundException;
 import ru.itis.marketplace.userservice.service.UserBrandService;
 import ru.itis.marketplace.userservice.client.BrandsRestClient;
-import ru.itis.marketplace.userservice.entity.MarketPlaceUser;
 import ru.itis.marketplace.userservice.entity.UserBrand;
 import ru.itis.marketplace.userservice.exception.BadRequestException;
-import ru.itis.marketplace.userservice.repository.MarketPlaceUserRepository;
+import ru.itis.marketplace.userservice.repository.UserRepository;
 import ru.itis.marketplace.userservice.repository.UserBrandRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserBrandServiceImpl implements UserBrandService {
 
-    private final MarketPlaceUserRepository userRepository;
+    private final UserRepository userRepository;
     private final UserBrandRepository userBrandRepository;
     private final BrandsRestClient brandsRestClient;
 
     @Override
     @Transactional
-    public UserBrand addBrandToUser(Long userId, Long brandId) {
-        Optional<MarketPlaceUser> optionalUser = this.userRepository.findById(userId);
-        boolean brandExist = this.brandsRestClient.brandWithIdExist(brandId);
-        if (optionalUser.isPresent() && brandExist) {
-            return this.userBrandRepository.save(new UserBrand(optionalUser.get(), brandId));
-        } else if (optionalUser.isEmpty()) {
-            throw new NoSuchElementException("User with ID: " + userId + " do not exist");
-        } else {
-            throw new BadRequestException("Brand with ID: " + brandId + " do not exist");
+    public UserBrand declareBrandOwner(Long userId, Long brandId) {
+        userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with ID: " + userId + " not found"));
+        boolean brandExist = brandsRestClient.brandWithIdExist(brandId);
+        if (!brandExist) {
+            throw new BadRequestException("Brand with ID: " + brandId + " does not exist");
         }
+        var userBrand = userBrandRepository.findByBrandId(brandId);
+        if (userBrand.isPresent()) {
+            throw new BadRequestException("Brand with ID: " + brandId + " is already the property of the user with ID: " + userBrand.get().getUserId());
+        }
+        return userBrandRepository.save(new UserBrand(userId, brandId));
     }
 
     @Override
     public List<Long> findAllUserBrands(Long userId) {
-        Optional<MarketPlaceUser> optionalUser = this.userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            return this.userBrandRepository.findByUserId(userId)
-                    .stream()
-                    .map(UserBrand::getBrandId)
-                    .toList();
-        } else {
-            throw new NoSuchElementException("User with ID: " + userId + " do not exist");
-        }
+        userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with ID: " + userId + " not found"));
+        return userBrandRepository.findByUserId(userId)
+                .stream()
+                .map(UserBrand::getBrandId)
+                .toList();
     }
 
     @Override
     @Transactional
-    public void deleteUserBrand(Long userId, Long brandId) {
-        this.userBrandRepository.deleteByBrandId(brandId);
+    public void deleteUserBrand(Long brandId) {
+        userBrandRepository.deleteByBrandId(brandId);
+    }
+
+    @Override
+    public UserBrand findUserBrandByBrandId(Long brandId) {
+        return userBrandRepository
+                .findByBrandId(brandId)
+                .orElseThrow(() -> new NotFoundException("Brand with ID: " + brandId + " does not have owner"));
     }
 }

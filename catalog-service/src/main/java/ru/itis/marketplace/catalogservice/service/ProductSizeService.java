@@ -7,5 +7,6 @@ import java.util.List;
 public interface ProductSizeService {
     List<ProductSize> findAllProductSizes(Long productId);
     ProductSize createProductSize(Long productId, String name);
-    void deleteAllProductSizesById(Long brandId, List<Long> sizeIds);
+    void deleteAllProductSizesById(List<Long> sizeIds);
+    ProductSize findSizeByIdAndProductId(Long productId, Long sizeId);
 }
